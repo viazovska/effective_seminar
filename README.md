@@ -4,6 +4,6 @@
 
  You can can run these slides from the link below. The final result contains lots of visualizations and a live numerical simulation to explain the Siegel mean value theorem!
 
-https://nihargargava.com/divalg_seminar
+https://nihargargava.com/effective_seminar
 
  
