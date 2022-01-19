@@ -1,0 +1,35 @@
+
+<head>
+	<script src="https://unpkg.com/d3@5.6.0/dist/d3.min.js"></script>
+
+</head>
+
+<body>
+	<svg>
+	</svg>
+		<script>
+//The SVG Container
+var svgContainer = d3.select("svg")
+     .attr("width", 400)
+	.attr("height", 400)
+	.attr("background-color","red");
+
+//foreignObject
+var latex_raw = "\\text{SFR}_{[\\textup{O\\ II}]}=10.10\\text{M}_{\\odot}\\ {\\text{ yr}}^{-1}";
+var latex_render_url = "http://latex.codecogs.com/gif.latex?";
+var latex_query = encodeURI(latex_raw);
+var latex = svgContainer.append("foreignObject")
+     .attr("x", 100)
+     .attr("y", 60)
+     .attr("width", 400)
+     .attr("height", 200)
+     .attr("requiredFeatures", "http://www.w3.org/TR/SVG11/feature#Extensibility")
+     .append("xhtml:body").
+	attr("margin", 0)
+     .append("img")
+	.attr("src", latex_render_url + latex_query);
+
+
+		</script>
+
+</body>

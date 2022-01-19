@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+
+<!-- This script is totally based on "Jugaad" -->
+<!-- I don't know how to trigger slide-transitions with the auto-animate feature -->
+<!-- So I will load this entire d3 scipt as a background on the slide and let it run the show -->
+
+<!-- It took me a lot of time trying to make mathJax work with d3js. -->
+<!-- I took help from this blog: -->
+<!-- https://www.thesoftwaresimpleton.com/blog/2016/05/25/sine-wave -->
+<!-- After a lot of profanity, I finally managed to make it. It had been emotional. -->
+
+
+<meta charset="utf-8">
+
+<link rel="stylesheet" href="../dist/theme/white.css" id="theme">
+
+
+<body style='overflow: hidden;'>
+
+	<script src="//d3js.org/d3.v3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/7.2.0/math.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+	</script>
+
+
+	<script>
+
+		//For making things of a preset ratio
+		const windowRatio = 1.0;
+		const TextRatio = 0.2;
+
+
+//For dynamically adjusting ratio
+// const screenRatio = window.innerHeight/window.innerWidth;
+var margin = 
+	//{top: 50, right: 20, bottom: 50, left: 20},
+	{top: 0, right: 0, bottom: 0, left: 0};
+// width = 960 - margin.left - margin.right,
+// height = 500 - margin.top - margin.bottom;
+//width = Math.min(600, window.innerWidth - margin.left - margin.right - 10),
+//height = Math.min(600 - margin.top - margin.bottom, window.innerHeight - margin.top - margin.bottom);
+
+
+width = window.innerWidth;
+height = window.innerWidth*windowRatio;
+
+
+//Set transit speed
+var transitDuration  = 1000;
+
+//This is the scale that my human brain can understand
+var scaleForCode = 5;
+
+//x and y functions take domain as shown and currectly spit out the right coordinates
+var x = d3.scale.linear()
+	.domain([-scaleForCode, scaleForCode])
+	.range([0, width]);
+
+//x and y functions take domain as shown and currectly spit out the right coordinates
+var y = d3.scale.linear()
+	.domain([-scaleForCode*windowRatio, scaleForCode*windowRatio]) //adjusted by windowRatio
+	.range([height*0.9, -0.1*height]);
+	//.range([height*(windowRatio - TextRatio), -(TextRatio)*height]);
+
+unit = x(1)-x(0);
+
+
+
+//creates a small set of lattice points in Z^2 and load them up in that empty array
+const xRange = 22;
+const yRange = 22;
+var latticepoints = [];
+for (let i= -xRange; i<=xRange;i++)
+{
+	for (let j=-yRange; j<=yRange; j++)
+	{
+		latticepoints.push([i,j]);
+	}
+};
+//check if they got written
+//console.log(latticepoints)
+
+
+//sets up the svg element to be located correctly
+var oursvg = d3.select("body").append("svg")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom);
+//  .append("g")
+//    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+//intention: Take a 2d coordinate and put point there
+const cRadius='2px';
+const cRadius1='2px';
+const cRadius2=x(0.5)-x(0);
+const color1='black'
+const color2='blue'
+const color3='red'
+const color4='orange'
+function putPointHere(d){
+	oursvg.append('circle')
+		.attr('class','Lpoint')
+		.attr('r',cRadius)
+		.attr('cx',x(d[0]))
+		.attr('cy',y(d[1]))
+		.attr('Lcoord',d) //Lattice base coordinate
+		.attr('fill',color1);
+}
+
+
+
+
+//Make a matrix A act on a vector d
+function multiply(A,d){
+	var a1 = d[0]*A[0][0] + d[1]*A[0][1];
+	var a2 = d[0]*A[1][0] + d[1]*A[1][1];
+	return [a1,a2];
+}
+
+//multiply two matrices
+function multMat(B,A){
+	var c00 = B[0][0]*A[0][0] + B[0][1]*A[1][0];
+	var c01 = B[0][0]*A[0][1] + B[0][1]*A[1][1];
+	var c10 = B[1][0]*A[0][0] + B[1][1]*A[1][0];
+	var c11 = B[1][0]*A[0][1] + B[1][1]*A[1][1];
+	return [[c00,c01],[c10,c11]];
+}
+
+//invert a matrix
+function invMat(A){
+	var det = A[0][0]*A[1][1] - A[0][1]*A[1][0];
+	var c00 = A[1][1]/det;
+	var c01 = -A[1][0]/det;
+	var c10 = -A[0][1]/det;
+	var c11 = A[0][0]/det;
+	return [[c00,c01],[c10,c11]];
+}
+
+function randomLatticeMatrix()
+{
+	//generate a random lattice through Matthew's parametrization
+	var a = (1+math.random())*math.pi/3;
+	var b= math.random();
+	var zx= math.cos(a);
+	var zy= math.sin(a)/b;
+	var szy = math.sqrt(zy);
+	var delt= math.random()*2*math.pi;
+	var MatQ = [[math.cos(delt),math.sin(delt)],[-math.sin(delt),math.cos(delt)]];	
+	var MatR = [[szy,zx/szy],[0, 1/szy]];	
+	return multMat(MatQ,MatR);
+}
+
+
+//Draw all the points in their initial places
+latticepoints.forEach(function(d) { 
+	putPointHere(d);
+});
+
+
+
+
+//Text should be drawn over everything else
+// This is total "Judaad". In order to manipulate this text, I have put it in a container called text1
+
+//first let us make a box to contain all our text
+//This Jugaad box will become invisible in the slides! Try changing the white to red below to see the reality
+
+const textboxH = height*0.2;
+const textboxX = -5;
+const textboxY = height-textboxH;
+const textboxW = width+5;
+
+oursvg.append("rect")
+	.attr("class", "textbox")
+	.attr("x", textboxX)
+	.attr("y", textboxY)
+	.attr("width",textboxW)
+	.attr("height",textboxH+10)
+	.attr("fill",'white');
+
+//integral of f(x)
+oursvg.append("g")
+	.attr("class", "statex_fxint")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (textboxX+textboxW*0.6) + " ,"+ (textboxY+textboxH*0.14) + ")") 
+	.attr("font-size","1.0em")
+	.append("g")
+	.attr("class", "tick")
+	.append("text")  	
+	.text("$ \\int_{\\mathbb{R}^2} f(x)dx=$");
+
+//value of lattice sum
+oursvg.append("g")
+	.attr("class", "statex_latticesumvalue")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (textboxX+textboxW*0.1) + " ,"+ (textboxY+textboxH*0.14) + ")") 
+	.attr("font-size","1.0em")
+	.append("g")
+	.attr("class", "tick")
+	.append("text")  	
+	.text("$\\Phi_f(\\Lambda)\ \  = $");
+
+//average value of lattice sum
+oursvg.append("g")
+	.attr("class", "statex_avg")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (textboxX+textboxW*0.036) + " ,"+ (textboxY+textboxH*0.46) + ")") 
+	.attr("font-size","1.0em")
+	.append("g")
+	.attr("class", "tick")
+	.append("text")  	
+	.text("$\\frac{\\sum_{\\Lambda \\in S} \\Phi_f(\\Lambda)}{{\\#S}}= $");
+
+//just an equal to sign
+oursvg.append("g")
+	.attr("class", "statex_equalsign")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (textboxX+textboxW*0.38) + " ,"+ (textboxY+textboxH*0.64) + ")") 
+	.attr("font-size","1.0em")
+	.append("g")
+	.attr("class", "tick")
+	.append("text")  	
+	.text("$= $");
+
+//Fake Line looking like fraction
+//.attr('transform', " translate(" + (textboxX+textboxW*0.1) + " ,"+ (textboxY+10) + ")") 
+var lineY = textboxY + textboxH*0.67;
+var lineX = textboxX+textboxW*0.27;
+var lineW = textboxW*0.10;;
+
+oursvg.append('line')
+	.attr('class','fractionline')
+	.attr('x1', lineX)
+	.attr('y1', lineY)
+	.attr('x2', lineX + lineW)
+	.attr('y2', lineY)
+	.attr('stroke','black')
+	.attr('opacity',0.0)
+	.attr('stroke-width','0.08em');
+
+//value of lattice sum in text
+oursvg.append("text")
+	.attr('text-anchor', 'middle')
+	.attr("class", "LSvalue")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (lineX + lineW*0.50 )+" ,"+ (textboxY + textboxH*0.32 )+ ")") 
+	.attr("font-size","1.0em")
+	.text('0');
+
+//value of sum of lattice sum in text
+oursvg.append("text")
+	.attr('text-anchor', 'middle')
+	.attr("class", "totalofvalue")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (lineX + lineW*0.50)+" ,"+ (textboxY + textboxH*0.62 )+ ")") 
+	.attr("font-size","1.0em")
+	.text('0.0');
+
+oursvg.append("text")
+	.attr('text-anchor', 'middle')
+	.attr("class", "samplesize")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (lineX + lineW*0.50)+" ,"+ (textboxY + textboxH*0.82 )+ ")") 
+	.attr("font-size","1.0em")
+	.text('0.0');
+
+
+oursvg.append("text")
+	.attr('text-anchor', 'left')
+	.attr("class", "SMTaverage")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (textboxX + textboxW*0.49)+" ,"+ (textboxY + textboxH*0.72 )+ ")") 
+	.attr("font-size","1.0em")
+	.text('0.00');
+
+
+oursvg.append("text")
+	.attr('text-anchor', 'middle')
+	.attr("class", "area")
+	.attr("opacity", 0.0)
+	.attr('transform', " translate(" + (textboxX + textboxW*0.90 )+" ,"+ (textboxY + textboxH*0.32 )+ ")") 
+	.attr("font-size","1.0em")
+	.text('0.0');
+
+
+
+
+// Set a target matrix to take the lattice to and transition to it
+// Target is given as arguments a11 a12 a21 a22
+function transto(A){
+	//perform rotation on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		//This number is obtained as a string intitially
+		var Bcoordstr = d3.select(this)
+			.attr('Lcoord')
+			.split(',') ;
+		//so now we store it as an array of numbers
+		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+		var newcoord = multiply(A,Bcoord);
+		d3.select(this)
+			.transition().duration(transitDuration)
+			.attr('cx',x(newcoord[0]))
+			.attr('cy',y(newcoord[1]));
+
+	});
+}
+
+
+//Directly apply target matrix without transitioning
+function switchto(A){
+	//perform matrix on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		//This number is obtained as a string intitially
+		var Bcoordstr = d3.select(this)
+			.attr('Lcoord')
+			.split(',') ;
+		//so now we store it as an array of numbers
+		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+		//	console.log(Bcoord);
+		var newcoord = multiply(A,Bcoord);
+		d3.select(this)
+			.attr('cx',x(newcoord[0]))
+			.attr('cy',y(newcoord[1]));
+	});
+}
+
+//Randomly rotate when not in use
+var rotateState = true; //boolean that is either true or false
+var Rate = 0.00006; //Rate of spinning
+var t0 = Date.now();
+var BaseMat = [[2.0,0.567],[0.0,0.5]];
+d3.timer(function() {
+	if(rotateState){
+		var delt= (Date.now() - t0) * Rate;
+		var RotMat = [[Math.cos(delt),Math.sin(delt)],[-Math.sin(delt),Math.cos(delt)]];	
+		switchto(multMat(RotMat,BaseMat));
+	}
+});
+
+
+
+//Transition a change of radius
+function changeradius(newradius){
+	//perform transition on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		d3.select(this)
+			.transition().duration(transitDuration)
+			.attr('r',newradius);
+	});
+}
+
+//Transition a change of color
+function changecolor(newcolor){
+	//perform transition on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		d3.select(this)
+			.transition().duration(transitDuration)
+			.attr('fill',newcolor);
+	});
+}
+
+
+//Interpolate translate of non-svg elements can be done through this function
+// See https://stackoverflow.com/questions/24030267/d3-transition-for-transform-translate-not-working-for-div#25247387
+// This function will take a class name of a text object (see the Jugaad above)
+// and it will perform a string interpolation to do the movement smoothly
+function moveText(Tname,xnew,ynew)
+{
+	var startTransform = d3.selectAll(Tname).attr('transform');
+	//console.log(startTransform);
+	var endTransform = " translate(" + xnew+ " ,"+ynew+")";
+	//console.log(endTransform);
+	var translateInterpolator = d3.interpolateString(startTransform, endTransform);
+	d3.selectAll(Tname)
+		.transition().duration(transitDuration)
+		.attrTween('transform' , function(d){ return translateInterpolator });
+}
+
+//Takes a class name and changes opacity
+function changeOpacity(Tname,onew)
+{
+	d3.selectAll(Tname)
+		.transition().duration(transitDuration)
+		.attr('opacity' , onew );
+}
+
+//Takes a text class and changes text (without transitioning, obviously)
+function changeText(Tname,tnew)
+{
+	d3.selectAll(Tname)
+		.text(tnew );
+}
+
+
+//Unfortunately, applying any of the two function simultaneously does not make it work so nicely. 
+//So here's a function that changes color radius and transitions to a new lattice
+function changelattice(A,newcolor,newradius){
+	//perform rotation on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		//This number is obtained as a string intitially
+		var Bcoordstr = d3.select(this)
+			.attr('Lcoord')
+			.split(',') ;
+		//so now we store it as an array of numbers
+		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+		//	console.log(Bcoord);
+		var newcoord = multiply(A,Bcoord);
+		d3.select(this)
+			.transition().duration(transitDuration)
+			.attr('cx',x(newcoord[0]))
+			.attr('cy',y(newcoord[1]))
+			.attr('fill',newcolor)
+			.attr('r',newradius);
+
+	});
+}
+
+
+
+//This is the numerical simulation part
+//indicator function of a ball
+const Rad = unit*0.55; //value in true coordinates
+const Barea = math.pi*(Rad/unit)*(Rad/unit);
+changeText('text.area',Barea.toPrecision(3))
+function testf(coord) //warning: takes input in true coordinates 
+{
+
+	const distsq = (x(0)-coord[0])*(x(0)-coord[0]) + (y(0)-coord[1])*(y(0)-coord[1]);
+	//console.log(distsq);
+	if (distsq < Rad*Rad)
+	{ 	return 1;
+	}
+	else
+	{ 	return 0;
+	}
+}
+
+var Testednumber = 0;
+var Testedsum = 0;
+
+//adds a sample to our total and updates text
+//direcly switches to new lattice
+function testSample(A)  //please pass a randomly generated matrix. Otherwise what's the point!
+{
+	//console.log("Testing random matrix");
+	Testednumber++;
+	switchto(A);
+	var LS=-1;
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		//the output probably is a string initially
+		// so the + makes it a number
+		//console.log('newpoint');
+		//console.log(d3.select(this).attr('Lcoord'));
+		var point = [+d3.select(this).attr('cx'),+d3.select(this).attr('cy')];
+		//console.log(point);
+		var outval = testf(point);
+		LS+=outval;
+	});
+	Testedsum +=LS;
+	changeText('text.totalofvalue',Testedsum);
+	changeText('text.samplesize',Testednumber);
+	changeText('text.LSvalue',LS);
+	var SMTavg = (1.0*Testedsum)/Testednumber;
+	changeText('text.SMTaverage',SMTavg.toPrecision(3));
+
+}
+
+
+
+
+//Test function indicated as 
+oursvg.append('circle')
+	.attr('class','testball')
+	.attr('opacity',0.6)
+	.attr('r',0.0)
+	.attr('cx',x(0))
+	.attr('cy',y(0))
+	.attr('fill',color3);
+
+//Initializing everything like how it was left in the previous slide
+BaseMat=[[1,0],[0,1]];
+switchto(BaseMat);
+t0=Date.now();
+
+// These three ques were for adjusting when the transitions happen. 
+// Due to glitches, now we have no indexing and a simple queue of transitions
+var firstQue = 1
+var secondQue = 3
+var thirdQue = 6
+
+
+var _transitions = [
+	{
+		transitionForward: () => {
+			console.log("Drawing testball");
+			d3.selectAll('circle.testball')
+				.transition().duration(transitDuration)
+				.attr('r',Rad);
+			console.log("Making integral appear");
+			changeOpacity('g.statex_fxint',1.0);
+		//	changeOpacity('g.statex_latticesumvalue',1.0);
+		//	changeOpacity('g.statex_avg',1.0);
+		//	changeOpacity('g.statex_equalsign',1.0);
+		//	changeOpacity('line.fractionline',1.0);
+		//	changeOpacity('text.LSvalue',1.0);
+		//	changeOpacity('text.totalofvalue',1.0);
+		//	changeOpacity('text.samplesize',1.0);
+			changeOpacity('text.area',1.0);
+		//	changeOpacity('text.SMTaverage',1.0);
+		//	changeOpacity('line.fractionline',1.0);
+			//Waiting to serve you :)
+
+		},
+		transitionBackward: () => {
+			d3.selectAll('circle.testball')
+				.transition().duration(transitDuration)
+				.attr('r',0.0);
+			//switchto(BaseMat);
+			//t0=Date.now();
+			changeOpacity('g.statex_fxint',0.0);
+		//	changeOpacity('g.statex_latticesumvalue',0.0);
+		//	changeOpacity('g.statex_avg',0.0);
+		//	changeOpacity('g.statex_equalsign',0.0);
+		//	changeOpacity('line.fractionline',0.0);
+		//	changeOpacity('text.LSvalue',0.0);
+		//	changeOpacity('text.totalofvalue',0.0);
+		//	changeOpacity('text.samplesize',0.0);
+			changeOpacity('text.area',0.0);
+		//	changeOpacity('text.SMTaverage',0.0);
+		//	changeOpacity('line.fractionline',0.0);
+		}
+		//index: firstQue
+	},
+	{
+		//empty transition
+		transitionForward: () => {
+			console.log("Second and empty transition");
+			const i = 0;
+		},
+		transitionBackward:() => {
+			const i = -1;}
+	},
+	{
+		//empty transition
+		transitionForward: () => {
+			console.log("Third and empty transition");
+			const i = 0;
+		},
+		transitionBackward:() => {
+			const i = -1;}
+	},
+	{
+		transitionForward: () => {
+			console.log("Fourth transition. Making lattice sum appear");
+
+		//	changeOpacity('g.statex_fxint',1.0);
+			changeOpacity('g.statex_latticesumvalue',1.0);
+		//	changeOpacity('g.statex_avg',1.0);
+		//	changeOpacity('g.statex_equalsign',1.0);
+		//	changeOpacity('line.fractionline',1.0);
+			changeOpacity('text.LSvalue',1.0);
+		//	changeOpacity('text.totalofvalue',1.0);
+		//	changeOpacity('text.samplesize',1.0);
+		//	changeOpacity('text.area',1.0);
+		//	changeOpacity('text.SMTaverage',1.0);
+		//	changeOpacity('line.fractionline',1.0);
+
+		},
+		transitionBackward: () => {
+		//	changeOpacity('g.statex_fxint',0.0);
+			changeOpacity('g.statex_latticesumvalue',0.0);
+		//	changeOpacity('g.statex_avg',0.0);
+		//	changeOpacity('g.statex_equalsign',0.0);
+		//	changeOpacity('line.fractionline',0.0);
+			changeOpacity('text.LSvalue',0.0);
+		//	changeOpacity('text.totalofvalue',0.0);
+		//	changeOpacity('text.samplesize',0.0);
+		//	changeOpacity('text.area',0.0);
+		//	changeOpacity('text.SMTaverage',0.0);
+		//	changeOpacity('line.fractionline',0.0);
+		}
+		//index: secondQue
+	}
+	,
+	{
+		//empty transition
+		transitionForward: () => {
+			console.log("Fifth and empty");
+			const i = 0;
+		},
+		transitionBackward:() => {
+			const i = -1;}
+	},
+	{
+		//empty transition
+		transitionForward: () => {
+			console.log("Sixth, empty transition");
+			const i = 0;
+		},
+		transitionBackward:() => {
+			const i = -1;}
+	},
+	{
+		transitionForward: () => {
+
+		console.log("Running a test!");
+		rotateState=false
+		var A = randomLatticeMatrix();
+		transto(A);
+		setTimeout(()=>testSample(A),transitDuration);
+		//	changeOpacity('g.statex_fxint',1.0);
+		//	changeOpacity('g.statex_latticesumvalue',1.0);
+			changeOpacity('g.statex_avg',1.0);
+		//	changeOpacity('g.statex_equalsign',1.0);
+			changeOpacity('line.fractionline',1.0);
+		//	changeOpacity('text.LSvalue',1.0);
+			changeOpacity('text.totalofvalue',1.0);
+			changeOpacity('text.samplesize',1.0);
+		//	changeOpacity('text.area',1.0);
+		//	changeOpacity('text.SMTaverage',1.0);
+		//	changeOpacity('line.fractionline',1.0);
+		},
+		transitionBackward: () => {
+			//Cannot UNDO A TEST!
+			rotateState=true;
+			t0=Date.now();
+			transto(BaseMat);
+		//	changeOpacity('g.statex_fxint',0.0);
+		//      changeOpacity('g.statex_latticesumvalue',0.0);
+		  	changeOpacity('g.statex_avg',0.0);
+		//	changeOpacity('g.statex_equalsign',0.0);
+		  	changeOpacity('line.fractionline',0.0);
+		//      changeOpacity('text.LSvalue',0.0);
+		  	changeOpacity('text.totalofvalue',0.0);
+		  	changeOpacity('text.samplesize',0.0);
+		//	changeOpacity('text.area',0.0);
+		//	changeOpacity('text.SMTaverage',0.0);
+		//	changeOpacity('line.fractionline',0.0);
+
+		}
+		//index: thirdQue
+	}
+	,
+	{
+		transitionForward: () => {
+		console.log("Running a test!");
+		rotateState=false
+		var A = randomLatticeMatrix();
+		transto(A);
+		setTimeout(()=>testSample(A),transitDuration);
+		//	changeOpacity('g.statex_fxint',1.0);
+		//	changeOpacity('g.statex_latticesumvalue',1.0);
+		//	changeOpacity('g.statex_avg',1.0);
+			changeOpacity('g.statex_equalsign',1.0);
+		//	changeOpacity('line.fractionline',1.0);
+		//	changeOpacity('text.LSvalue',1.0);
+		//	changeOpacity('text.totalofvalue',1.0);
+		//	changeOpacity('text.samplesize',1.0);
+		//	changeOpacity('text.area',1.0);
+			changeOpacity('text.SMTaverage',1.0);
+		//	changeOpacity('line.fractionline',1.0);
+		},
+		transitionBackward: () => {
+			//Cannot UNDO A TEST!
+			rotateState=true;
+			t0=Date.now();
+			transto(BaseMat);
+		//	changeOpacity('g.statex_fxint',0.0);
+		//	changeOpacity('g.statex_latticesumvalue',0.0);
+		//	changeOpacity('g.statex_avg',0.0);
+			changeOpacity('g.statex_equalsign',0.0);
+		//	changeOpacity('line.fractionline',0.0);
+		//	changeOpacity('text.LSvalue',0.0);
+		//	changeOpacity('text.totalofvalue',0.0);
+		//	changeOpacity('text.samplesize',0.0);
+		//	changeOpacity('text.area',0.0);
+			changeOpacity('text.SMTaverage',0.0);
+		//	changeOpacity('line.fractionline',0.0);
+
+		}
+		//index: thirdQue+1
+	}
+	,
+	{
+		transitionForward: () => {
+		console.log("Running a test!");
+		rotateState=false
+		var A = randomLatticeMatrix();
+		transto(A);
+		setTimeout(()=>testSample(A),transitDuration);
+		},
+		transitionBackward: () => {
+			//Cannot UNDO A TEST!
+			rotateState=true;
+			t0=Date.now();
+			transto(BaseMat);
+
+		}
+		//index: thirdQue+2
+	}
+	,
+	{
+		transitionForward: () => {
+		console.log("Running a test!");
+		rotateState=false
+		var A = randomLatticeMatrix();
+		transto(A);
+		setTimeout(()=>testSample(A),transitDuration);
+		},
+		transitionBackward: () => {
+			//Cannot UNDO A TEST!
+			rotateState=true;
+			t0=Date.now();
+			transto(BaseMat);
+
+		}
+		//index: thirdQue+3
+	}
+	,
+	{
+		transitionForward: () => {
+		console.log("Running a test!");
+		rotateState=false
+		var A = randomLatticeMatrix();
+		transto(A);
+		setTimeout(()=>testSample(A),transitDuration);
+		},
+		transitionBackward: () => {
+			//Cannot UNDO A TEST!
+			rotateState=true;
+			t0=Date.now();
+			transto(BaseMat);
+
+		}
+		//index: thirdQue+4
+	}
+	,
+	{
+		transitionForward: () => {
+		console.log("Testing commences. Here I go!");
+		const howmany = 95;
+		for (var i=0;i<howmany;i++)
+			{
+			setTimeout(()=>testSample(randomLatticeMatrix()),transitDuration*0.01);
+			}
+
+		},
+		transitionBackward: () => {
+			//
+			//Cannot UNDO A TEST!
+		}
+		//index: thirdQue+5
+	}
+	,
+	{
+		transitionForward: () => {
+		console.log("Adding 400 more samples!");
+		const howmany = 400;
+		for (var i=0;i<howmany;i++)
+			{
+			setTimeout(()=>testSample(randomLatticeMatrix()),transitDuration*0.01);
+			}
+
+		},
+		transitionBackward: () => {
+			//
+			//Cannot UNDO A TEST!
+		}
+		//index: thirdQue+6
+	},
+	{
+		//empty transition
+		//for some reason, this transition gets called at the beginning of the slide
+		transitionForward: () => {
+			const i = 0;
+			console.log("Safety transition");
+		},
+		transitionBackward:() => {
+			const i = -1;}
+	},
+];
+
+
+//mathjax is stupid and it won't automatically parse the SVG file
+//it has to be told seperately to make my equations readable throughout the text
+// the following is copied from https://gist.github.com/larsenmtl/86077bddc91c3de8d3db6a53216b2f47
+setTimeout(() => {
+
+	MathJax.Hub.Config({
+		tex2jax: {
+			inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+			processEscapes: true
+		}
+	});
+
+	MathJax.Hub.Register.StartupHook("End", function() {
+		setTimeout(() => {
+			oursvg.selectAll('.tick').each(function(){
+				var self = d3.select(this),
+					g = self.select('text>span>svg');
+				g.remove();
+				self.append(function(){
+					return g.node();
+				});
+			});
+		}, 1);
+	});
+
+	MathJax.Hub.Queue(["Typeset", MathJax.Hub, oursvg.node()]);
+
+}, 1);
+
+
+
+
+
+	</script>

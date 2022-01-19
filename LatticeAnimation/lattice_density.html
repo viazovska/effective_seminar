@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<!-- This script is totally based on "Jugaad" -->
+<!-- I don't know how to trigger slide-transitions with the auto-animate feature -->
+<!-- So I will load this entire d3 scipt as a background on the slide and let it run the show -->
+
+<!-- It took me a lot of time trying to make mathJax work with d3js. -->
+<!-- I took help from this blog: -->
+<!-- https://www.thesoftwaresimpleton.com/blog/2016/05/25/sine-wave -->
+<!-- After a lot of profanity, I finally managed to make it. It had been emotional. -->
+
+
+<meta charset="utf-8">
+
+<link rel="stylesheet" href="../dist/theme/white.css" id="theme">
+
+
+<body style='overflow: hidden;'>
+
+  <script src="//d3js.org/d3.v3.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>
+
+
+<script>
+//
+//For making things of a preset ratio
+const windowRatio = 0.8;
+
+//For dynamically adjusting ratio
+// const screenRatio = window.innerHeight/window.innerWidth;
+var margin = 
+	//{top: 50, right: 20, bottom: 50, left: 20},
+	{top: 0, right: 0, bottom: 0, left: 0};
+    // width = 960 - margin.left - margin.right,
+    // height = 500 - margin.top - margin.bottom;
+    //width = Math.min(600, window.innerWidth - margin.left - margin.right - 10),
+    //height = Math.min(600 - margin.top - margin.bottom, window.innerHeight - margin.top - margin.bottom);
+	
+
+	width = window.innerWidth;
+	height = window.innerWidth*windowRatio;
+    
+
+//Set transit speed
+var transitDuration  = 1000;
+var scaleForCode = 5;
+//x and y functions take domain as shown and currectly spit out the right coordinates
+var x = d3.scale.linear()
+    .domain([-scaleForCode, scaleForCode])
+    .range([0, width]);
+
+//x and y functions take domain as shown and currectly spit out the right coordinates
+var y = d3.scale.linear()
+    .domain([-scaleForCode*windowRatio, scaleForCode*windowRatio]) //adjusted by windowRatio
+    .range([height, 0]);
+
+
+
+//creates a small set of lattice points in Z^2 and load them up in that empty array
+const xRange = 12;
+const yRange = 14;
+var latticepoints = [];
+for (let i= -xRange; i<=xRange;i++)
+{
+	for (let j=-yRange; j<=yRange; j++)
+	{
+		latticepoints.push([i,j]);
+	}
+};
+//check if they got written
+//console.log(latticepoints)
+
+
+//sets up the svg element to be located correctly
+var oursvg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+//  .append("g")
+//    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+
+//intention: Take a 2d coordinate and put point there
+const cRadius='2px';
+const cRadius1='2px';
+const cRadius2=x(0.5)-x(0);
+const color1='black'
+const color2='blue'
+const color3='red'
+const color4='green'
+function putPointHere(d){
+	oursvg.append('circle')
+    		.attr('class','Lpoint')
+		.attr('r',cRadius)
+		.attr('cx',x(d[0]))
+		.attr('cy',y(d[1]))
+		.attr('Lcoord',d) //Lattice base coordinate
+		.attr('fill',color1);
+}
+
+
+function reducetoFD(A){
+}
+
+
+//Make a matrix A act on a vector d
+function multiply(A,d){
+	var a1 = d[0]*A[0][0] + d[1]*A[0][1];
+	var a2 = d[0]*A[1][0] + d[1]*A[1][1];
+	return [a1,a2];
+}
+
+//multiply two matrices
+function multMat(B,A){
+	var c00 = B[0][0]*A[0][0] + B[0][1]*A[1][0];
+	var c01 = B[0][0]*A[0][1] + B[0][1]*A[1][1];
+	var c10 = B[1][0]*A[0][0] + B[1][1]*A[1][0];
+	var c11 = B[1][0]*A[0][1] + B[1][1]*A[1][1];
+	return [[c00,c01],[c10,c11]];
+}
+
+
+
+
+//Draw all the points in their initial places
+    latticepoints.forEach(function(d) { 
+	  putPointHere(d);
+  });
+
+
+//Test ball on the points
+oursvg.append('circle')
+	.attr('class','testball')
+	.attr('opacity',0.6)
+	.attr('r',0)
+	.attr('cx',x(0))
+	.attr('cy',y(0))
+	.attr('fill',color3);
+
+//fundamental domain
+oursvg.append('polygon')
+	.attr('class','fundomain')
+	.attr('points',x(0)+','+y(0)+' '+x(1)+','+y(0)+' '+x(1.5)+','+y(1.0)+' '+x(0.5)+','+y(1.0)+' ')
+	.attr('fill',color4)
+	.attr('opacity',0.0)
+	.attr('stroke-width','2px');
+
+
+
+//Text should be drawn over everything else
+// This is total "Judaad". In order to manipulate this text, I have put it in a container called text1
+ oursvg.append("g")
+  .attr("class", "text1")
+  .attr("opacity", 0.0)
+  .attr('transform', " translate(" + x(-2)+ " ,"+y(3*windowRatio)+")") 
+  .attr("font-size","2.2em")
+	.append("g")
+      	.attr("class", "tick")
+      	.append("text")  	
+      	.text("\\(d =2\\)");
+
+// oursvg.append("g")
+//  .attr("class", "text2")
+//  .attr("opacity", 0.0)
+//  .attr('transform', " translate(" + x(0)+ " ,"+y(5*windowRatio)+")") 
+//  .attr("font-size","4.2em")
+//	.append("g")
+//      	.attr("class", "tick")
+//      	.append("text")  	
+//      	.text("$f(x) = e^x$");
+//oursvg
+//	.append('g')
+//	  .attr('class','tick')
+//	  .attr('transform', " translate(" + x(0)+ " ,"+y(7*windowRatio)+")") 
+//	 //   .attr("x", x(0))
+//	 //   .attr("y", y(4))
+//	    .attr("width", 1000)
+//	    .attr("height",1500)
+//	.append('text')
+//	  .text("This is some normal text")
+//	  .attr('text-anchor', 'middle')
+//	  .attr("font-size","4.2em");
+//	//	  .attr("letter-spacing","normal")
+//
+//	//	  .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+//	//	  .attr('class','title')
+//	//	  .attr('fill','red');
+
+
+// Set a target matrix to take the lattice to and transition to it
+// Target is given as arguments a11 a12 a21 a22
+function transto(A){
+	//perform rotation on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		//This number is obtained as a string intitially
+		var Bcoordstr = d3.select(this)
+				.attr('Lcoord')
+					.split(',') ;
+		//so now we store it as an array of numbers
+		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+	//	console.log(Bcoord);
+		var newcoord = multiply(A,Bcoord);
+		d3.select(this)
+     			.transition().duration(transitDuration)
+				.attr('cx',x(newcoord[0]))
+				.attr('cy',y(newcoord[1]));
+		
+	});
+}
+
+
+//Directly apply target matrix without transitioning
+function switchto(A){
+	//perform matrix on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		//This number is obtained as a string intitially
+		var Bcoordstr = d3.select(this)
+				.attr('Lcoord')
+					.split(',') ;
+		//so now we store it as an array of numbers
+		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+	//	console.log(Bcoord);
+		var newcoord = multiply(A,Bcoord);
+		d3.select(this)
+			.attr('cx',x(newcoord[0]))
+			.attr('cy',y(newcoord[1]));
+	});
+}
+
+//Randomly rotate when not in use
+var rotateState = true; //boolean that is either true or false
+var Rate = 0.00006; //Rate of spinning
+var t0 = Date.now();
+var BaseMat = [[2.0,0.567],[0.0,0.5]];
+d3.timer(function() {
+	if(rotateState){
+	  var delt= (Date.now() - t0) * Rate;
+	var RotMat = [[Math.cos(delt),Math.sin(delt)],[-Math.sin(delt),Math.cos(delt)]];	
+		switchto(multMat(RotMat,BaseMat));
+	}
+});
+
+
+
+//Transition a change of radius
+function changeradius(newradius){
+	console.log("changing radius");
+	console.log(newradius);
+	//perform transition on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		d3.select(this)
+		.transition().duration(transitDuration)
+			.attr('r',newradius);
+	});
+}
+
+//Transition a change of color
+function changecolor(newcolor){
+	//perform transition on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		d3.select(this)
+		.transition().duration(transitDuration)
+			.attr('fill',newcolor);
+	});
+}
+
+
+//Interpolate translate of non-svg elements can be done through this function
+// See https://stackoverflow.com/questions/24030267/d3-transition-for-transform-translate-not-working-for-div#25247387
+// This function will take a class name of a text object (see the Jugaad above)
+// and it will perform a string interpolation to do the movement smoothly
+function moveText(Tname,xnew,ynew)
+{
+			var startTransform = d3.selectAll(Tname).attr('transform');
+			console.log(startTransform);
+			var endTransform = " translate(" + xnew+ " ,"+ynew+")";
+			console.log(endTransform);
+			var translateInterpolator = d3.interpolateString(startTransform, endTransform);
+			d3.selectAll(Tname)
+				.transition().duration(transitDuration)
+				.attrTween('transform' , function(d){ return translateInterpolator });
+}
+function changeOpacity(Tname,onew)
+{
+			d3.selectAll(Tname)
+				.transition().duration(transitDuration)
+				.attr('opacity' , onew );
+}
+
+
+//Unfortunately, applying any of the two function simultaneously does not make it work so nicely. 
+//So here's a function that changes color radius and transitions to a new lattice
+function changelattice(A,newcolor,newradius){
+	//perform rotation on each lattice point
+	d3.selectAll('circle.Lpoint').each(function(d,i){
+		//This number is obtained as a string intitially
+		var Bcoordstr = d3.select(this)
+				.attr('Lcoord')
+					.split(',') ;
+		//so now we store it as an array of numbers
+		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+	//	console.log(Bcoord);
+		var newcoord = multiply(A,Bcoord);
+		d3.select(this)
+     			.transition().duration(transitDuration)
+				.attr('cx',x(newcoord[0]))
+				.attr('cy',y(newcoord[1]))
+				.attr('fill',newcolor)
+				.attr('r',newradius);
+		
+	});
+}
+
+
+var firstQue = 1
+var secondQue = 5
+var _transitions = [
+
+        {
+		transitionForward: () => {
+			transto([[1.0,0.5],[0.0,1.0]]); 
+			rotateState = false;
+			d3.selectAll('polygon.fundomain')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.7);
+		},
+		transitionBackward: () => {
+			BaseMat=[[1.0,0.5],[0.0,1.0]];
+			rotateState = true;
+			t0=Date.now();
+			d3.selectAll('polygon.fundomain')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.0);
+		},
+		  index: firstQue
+        },
+
+        {
+		transitionForward: () => {
+			changelattice([[1.0,0.5],[0.0,1.0]],color2,cRadius2); 
+		},
+		transitionBackward: () => {
+			changelattice([[1.0,0.5],[0.0,1.0]],color1,cRadius1); 
+		},
+		  index: firstQue+1
+        },
+        {
+		transitionForward: () => {
+			d3.selectAll('polygon.fundomain')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.0);
+			d3.selectAll('circle.testball')
+				.transition().duration(transitDuration)
+				.attr('r',200);
+		},
+		transitionBackward: () => {
+			d3.selectAll('polygon.fundomain')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.7);
+			d3.selectAll('circle.testball')
+				.transition().duration(transitDuration)
+				.attr('r',0);
+		},
+		  index: secondQue
+        },
+        {
+		transitionForward: () => {
+			d3.selectAll('polygon.fundomain')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.7);
+			d3.selectAll('circle.testball')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.0)
+				.attr('r',500);
+		},
+		transitionBackward: () => {
+			d3.selectAll('polygon.fundomain')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.0);
+			d3.selectAll('circle.testball')
+				.transition().duration(transitDuration)
+				.attr('opacity',0.6)
+				.attr('r',200);
+		},
+		  index: secondQue+1
+        }
+
+//      {
+//        transitionForward: () => recolorize(0.1, 1, 0.5),
+//        transitionBackward: () => recolorize(1, 1, 0.5),
+//        index: 0
+//      },
+//      {
+//        transitionForward: () => recolorize(1, 0.5, 1),
+//        index: 2
+//      }
+    ];
+
+
+//mathjax is stupid and it won't automatically parse the SVG file
+//it has to be told seperately to make my equations readable throughout the text
+// the following is copied from https://gist.github.com/larsenmtl/86077bddc91c3de8d3db6a53216b2f47
+setTimeout(() => {
+  
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+  
+  MathJax.Hub.Register.StartupHook("End", function() {
+    setTimeout(() => {
+          oursvg.selectAll('.tick').each(function(){
+          var self = d3.select(this),
+              g = self.select('text>span>svg');
+          g.remove();
+          self.append(function(){
+            return g.node();
+          });
+        });
+      }, 1);
+    });
+  
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, oursvg.node()]);
+  
+}, 1);
+
+
+
+
+
+</script>

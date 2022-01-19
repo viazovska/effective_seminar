@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<!-- Picked from before -->
+<!-- It took me a lot of time trying to make mathJax work with d3js. -->
+<!-- I took help from this blog: -->
+<!-- https://www.thesoftwaresimpleton.com/blog/2016/05/25/sine-wave -->
+<!-- After a lot of profanity, I finally managed to make it. It had been emotional. -->
+
+<!-- In this script, I will attempt to create a d3js demonstration to lay out my data -->
+
+
+<meta charset="utf-8">
+
+<link rel="stylesheet" href="../dist/theme/white.css" id="theme">
+
+
+<body style='overflow: hidden;'>
+
+  <script src="//d3js.org/d3.v3.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_SVG">
+  </script>
+
+
+<script>
+//
+//For making things of a preset ratio
+const windowRatio = 0.8;
+
+//For dynamically adjusting ratio
+// const screenRatio = window.innerHeight/window.innerWidth;
+var margin = 
+	//{top: 50, right: 20, bottom: 50, left: 20},
+	{top: 0, right: 0, bottom: 0, left: 0};
+    // width = 960 - margin.left - margin.right,
+    // height = 500 - margin.top - margin.bottom;
+    //width = Math.min(600, window.innerWidth - margin.left - margin.right - 10),
+    //height = Math.min(600 - margin.top - margin.bottom, window.innerHeight - margin.top - margin.bottom);
+	
+
+	width = window.innerWidth;
+	height = window.innerWidth*windowRatio;
+    
+
+//Set transit speed
+// var transitDuration  = 20; //for testing
+var transitDuration  = 2000;
+
+var scaleForCode = 5;
+//x and y functions take domain as shown and currectly spit out the right coordinates
+var x = d3.scale.linear()
+    .domain([scaleForCode*(-0.08), scaleForCode])
+    .range([0, width]);
+
+//x and y functions take domain as shown and currectly spit out the right coordinates
+var y = d3.scale.linear()
+    .domain([scaleForCode*(-0.08)*windowRatio, scaleForCode*windowRatio]) //adjusted by windowRatio
+    .range([height, 0]);
+
+
+// function to get latex output in scientific notation of a number
+// From 
+// https://stackoverflow.com/questions/11124451/how-can-i-convert-numbers-into-scientific-notation
+function scinote(num){
+	if (num>=1001){
+		var numInSciNot = {};
+		[numInSciNot.coefficient, numInSciNot.exponent] =  num.toExponential().split('e').map(item => Number(item));
+		if (+numInSciNot.coefficient <=1.0001){
+			return `10^\{${numInSciNot.exponent}\}`;
+		}
+		else{
+			return `${numInSciNot.coefficient} \\times 10^\{${numInSciNot.exponent}\}`;
+		}
+	// return num;
+	}
+	else {
+		return  num; // need to find a way to convert number to string, but let this jugadad be for now
+	}
+}
+ 
+
+//sets up the svg element to be located correctly
+var oursvg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
+
+
+
+//some constants
+const cRadius='2px';
+const cRadius1='2px';
+const cRadius2=x(0.5)-x(0);
+const color1='black'
+const color2='blue'
+const color3='red'
+const color4='orange'
+const color5='purple'
+const color6='violet'
+const color7='green'
+
+// initial scaling
+var C_1=0.6
+var C_2=0.015
+
+//some markings and label text on the axes:
+xlabels=[10,100,1000,1e4,1e5,1e6,1e10,1e20,1e30];//1.96248633242507e46 is where the intersecton of amit_big and venk_big happens
+ylabels=[1,10,100,1000,1e4,1e6,1e7];
+
+// line to connect to x-axis
+oursvg.selectAll('rect')
+	.data(xlabels)
+	.enter().append('line')
+		.attr('class',d => "xmark")
+		.attr('data',d => d ) //It remembers data
+		.attr('x1',d => x(d*C_1))
+		.attr('y1',y(0))
+		.attr('x2',d => x(d*C_1))
+		.attr('y2',d => y(-0.05))
+		.attr('stroke',color4)
+		.attr('opacity',1.0)
+		.attr('stroke-width','1px');
+
+
+// x-axis label text
+oursvg.selectAll('rect')
+	.data(xlabels)
+	.enter().append('g')
+		.attr("class", d => "xmark_text")
+		.attr('data',d => d) //It remembers data
+		.attr("opacity", 1.0)
+		.attr('transform', d=> " translate(" + x(d*C_1)+ " ,"+y(-0.03)+")") 
+		.attr("font-size","0.6em")
+		.append("g")
+			.attr("class", "tick")
+			.append("text")  	
+			.text(d => "\\("+scinote(d)+"\\)");
+
+
+// line to connect to y-axis
+oursvg.selectAll('rect')
+	.data(ylabels)
+	.enter().append('line')
+		.attr('class',d => "ymark")
+		.attr('data',d => d ) //It remembers data
+		.attr('y1',d => y(d*C_2))
+		.attr('x1',x(0))
+		.attr('y2',d => y(d*C_2))
+		.attr('x2',d => x(-0.05))
+		.attr('stroke',color4)
+		.attr('opacity',1.0)
+		.attr('stroke-width','1px');
+
+
+// y-axis label text
+oursvg.selectAll('rect')
+	.data(ylabels)
+	.enter().append('g')
+		.attr("class", d => "ymark_text")
+		.attr('data',d => d) //It remembers data
+		.attr("opacity", 1.0)
+		.attr('transform', d=> " translate(" + x(-0.30)+ " ,"+y(d*C_2)+")") 
+		.attr("font-size","0.6em")
+		.append("g")
+			.attr("class", "tick")
+			.append("text")  	
+			.text(d => "\\("+scinote(d)+"\\)");
+
+
+
+
+const plot_these_points =  (darray,type,drop_a_base=true, col = color1, op= 1.0) => {
+// A class attribute keeps track of what kind of point it is
+// Data attribute keeps track of the original data
+// Add a point for each data entry
+oursvg.selectAll('rect')
+	.data(darray)
+	.enter().append('circle')
+		.attr('class',d => type)
+		.attr('data',d => [d.d,d.c_d]) //It remembers data
+		.attr('cx',d=>x(d.d*C_1))
+		.attr('cy',d=>y(d.c_d*C_2))
+		.attr('r',d => cRadius)
+    		.attr('fill',d => col)
+		.attr('opacity',op);
+
+
+if (drop_a_base==true){
+	// Just a line to connect it to y-axis
+	oursvg.selectAll('rect')
+		.data(darray)
+		.enter().append('line')
+			.attr('class',d => type)
+			.attr('data',d => [d.d,d.c_d]) //It remembers data
+			.attr('x1',d => x(d.d*C_1))
+			.attr('y1',y(0))
+			.attr('x2',d => x(d.d*C_1))
+			.attr('y2',d => y(d.c_d*C_2))
+			.attr('stroke',color2)
+			.attr('opacity',op)
+			.attr('stroke-width','1px');
+
+
+	// Just a label on each data point
+	oursvg.selectAll('rect')
+		.data(darray)
+		.enter().append('g')
+			.attr("class", d => type+"_text")
+			.attr('data',d => [d.d,d.c_d]) //It remembers data
+			.attr("opacity", op)
+			.attr('transform', d=> " translate(" + x(d.d*C_1)+ " ,"+y(-0.03)+")") 
+			.attr("font-size","0.6em")
+			.append("g")
+			.attr("class", "tick")
+			.append("text")  	
+			.text(d => "\\("+d.d+"\\)");
+	}
+
+};
+
+//x-axis 
+oursvg.append('line')
+	.attr('class','xaxis')
+	.attr('x1',x(0))
+	.attr('y1',y(0))
+	.attr('x2',x(10))
+	.attr('y2',y(0))
+	.attr('stroke',color1)
+	.attr('opacity',1.0)
+	.attr('stroke-width','3px');
+
+//y-axis 
+oursvg.append('line')
+	.attr('class','yaxis')
+	.attr('x1',x(0))
+	.attr('y1',y(0))
+	.attr('x2',x(0))
+	.attr('y2',y(8))
+	.attr('stroke',color1)
+	.attr('opacity',1.0)
+	.attr('stroke-width','3px');
+
+
+// This is total "Judaad". In order to manipulate this text, I have put it in a container called xlabel. The other texts are similar
+ oursvg.append("g")
+  .attr("class", "xlabel")
+  .attr("opacity", 1.0)
+  .attr('transform', " translate(" + x(1.6)+ " ,"+y(-0.1)+")") 
+  .attr("font-size","1.2em")
+	.append("g")
+      	.attr("class", "tick")
+      	.append("text")  	
+	.text("\\(\\text{Dimension of packing\ } d\\)");
+
+//ylabel text
+ oursvg.append("g")
+  .attr("class", "ylabel")
+  .attr("opacity", 1.0)
+  .attr('transform', " translate(" + x(-0.35)+ " ,"+y(2.1)+")") 
+  .attr("font-size","1.2em")
+	.append("g")
+      	.attr("class", "tick")
+      	.append("text")  	
+	.text("\\(c_d\\)");
+
+// ylabel will change and become this in the text soon
+ oursvg.append("g")
+  .attr("class", "ylabel2")
+  .attr("opacity", 0.0)
+  .attr('transform', " translate(" + x(-0.35)+ " ,"+y(2.1)+")") 
+  .attr("font-size","1.2em")
+	.append("g")
+      	.attr("class", "tick")
+      	.append("text")  	
+	.text("\\(\\frac{c_d}{d}\\)");
+
+
+// To keep track of types of data points
+type_list=[];
+
+
+// Draw data from a file and plot it 
+d3.csv("data/known_dims.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"known");
+	type_list.push("known");
+});
+
+
+d3.csv("data/record.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"record",true,color1,1.0);
+	type_list.push("record");
+});
+
+d3.csv("data/venk_small.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"venk_small",false,color6,0.0);
+	type_list.push("venk_small");
+});
+d3.csv("data/venk_big.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"venk_big",false,color6,0.0);
+	type_list.push("venk_big");
+});
+
+d3.csv("data/amit_small.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"amit_small",false,color7,0.0);
+	type_list.push("amit_small");
+});
+d3.csv("data/amit_big.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"amit_big",false,color7,0.0);
+	type_list.push("amit_big");
+});
+
+d3.csv("data/ball.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"ball",false,color3,0.0);
+	type_list.push("ball");
+});
+
+d3.csv("data/vance.csv", function(data){
+    //code dealing with data here
+	plot_these_points(data,"vance",false,color5,0.0);
+	type_list.push("vance");
+});
+
+
+//Just linear scaling on x and y
+// default is when C_1 = 0.1, C_2 = 0.001
+function map_linear(C_1,C_2,d){
+	var a1 = d[0]*C_1;
+	var a2 = d[1]*C_2;
+	return [a1,a2];
+}
+
+//y-axis is constant multiple of x-axis and x is logarithmic
+function map_logx_rely(C_1,C_2,d){
+	var a1 = Math.log(d[0])*C_1
+	if (d[0]<=0.001){
+	// these points are on the y-axis
+	var a2 = C_2*d[1];
+	}
+	else{
+	var a2 = C_2*d[1]/d[0];
+	}
+	return [a1,a2];
+}
+
+//logarithmic scaling wrt constant C
+function map_rely(C_1,C_2,d){
+	var a1 = d[0]*C_1;
+	if (d[0]<=0.001){
+	// these points are on the y-axis
+	var a2 = C_2*d[1];
+	}
+	else{
+	var a2 = C_2*d[1]/d[0];
+	}
+	return [a1,a2];
+}
+
+// Change scaling with respect to a scale function for all points of a given type
+// A scale function must take input as a 2d vector and output a 2d vector
+function transto(scalfunc){
+
+
+	// Adjust marker labels and text
+  	d3.selectAll("line.xmark").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data').split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [+Bcoordstr[0],0.0];
+  		var newcoord = scalfunc(Bcoord);
+  		d3.select(this)
+       			.transition().duration(transitDuration)
+			.attr('x1', x(newcoord[0]) )
+			.attr('y1',y(0))
+			.attr('x2',x(newcoord[0]))
+			.attr('y2',y(-0.05));
+  	});
+  	
+  	// then label text should be moved
+  	d3.selectAll("g.xmark_text").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data')
+  					.split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [+Bcoordstr[0],0.0];
+  		var newcoord = scalfunc(Bcoord);
+		// this idea has been picked from
+		// https://stackoverflow.com/questions/24030267/d3-transition-for-transform-translate-not-working-for-div#25247387
+		var startTransform = d3.select(this).attr('transform');
+		var endTransform = " translate(" + x(newcoord[0])+ ","+y(-0.03)+")";
+		var translateInterpolator = d3.interpolateString(startTransform, endTransform);
+		d3.select(this)
+			.transition().duration(transitDuration)
+			.attrTween('transform' , function(d){ return translateInterpolator });
+  	});
+
+
+  	d3.selectAll("line.ymark").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data').split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [0.0,+Bcoordstr[0]];
+  		var newcoord = scalfunc(Bcoord);
+  		d3.select(this)
+       			.transition().duration(transitDuration)
+			.attr('y1', y(newcoord[1]) )
+			.attr('x1',x(0))
+			.attr('y2',y(newcoord[1]))
+			.attr('x2',x(-0.05));
+  	});
+  	
+  	// then label text should be moved
+  	d3.selectAll("g.ymark_text").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data')
+  					.split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [0.0,+Bcoordstr[0]];
+  		var newcoord = scalfunc(Bcoord);
+		// this idea has been picked from
+		// https://stackoverflow.com/questions/24030267/d3-transition-for-transform-translate-not-working-for-div#25247387
+		var startTransform = d3.select(this).attr('transform');
+		var endTransform = " translate(" + x(-0.3)+ ","+y(newcoord[1])+")";
+		// console.log("ytext is moving");
+		// console.log(endTransform);
+		var translateInterpolator = d3.interpolateString(startTransform, endTransform);
+		d3.select(this)
+			.transition().duration(transitDuration)
+			.attrTween('transform' , function(d){ return translateInterpolator });
+  	});
+
+	// change each data type point for each type in type_list
+	type_list.forEach( type => 
+	{
+  	//perform transformation to each point, indicator line, and label text
+  	//first points
+
+  	d3.selectAll("circle."+type).each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data')
+  					.split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+  		var newcoord = scalfunc(Bcoord);
+  		d3.select(this)
+       			.transition().duration(transitDuration)
+  				.attr('cx',x(newcoord[0]))
+  				.attr('cy',y(newcoord[1]));
+  	});
+  	
+  	// then indicator lines
+  	d3.selectAll("line."+type).each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data')
+  					.split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+  		var newcoord = scalfunc(Bcoord);
+  		d3.select(this)
+       			.transition().duration(transitDuration)
+  				.attr('x1',x(newcoord[0]))
+  				.attr('y1',y(0))
+  				.attr('x2',x(newcoord[0]))
+  				.attr('y2',y(newcoord[1]));
+  	});
+  	
+  	// then label text should be moved
+  	d3.selectAll("g."+type+"_text").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data')
+  					.split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [+Bcoordstr[0],+Bcoordstr[1]];
+  		var newcoord = scalfunc(Bcoord);
+		// this idea has been picked from
+		// https://stackoverflow.com/questions/24030267/d3-transition-for-transform-translate-not-working-for-div#25247387
+		var startTransform = d3.select(this).attr('transform');
+		var endTransform = " translate(" + x(newcoord[0])+ ","+y(-0.03)+")";
+		var translateInterpolator = d3.interpolateString(startTransform, endTransform);
+		d3.select(this)
+			.transition().duration(transitDuration)
+			.attrTween('transform' , function(d){ return translateInterpolator });
+  	});
+
+  	});
+
+}
+
+// Make a data type opaque/invisible
+// accepts a range in coordinates
+// range = [xmin, xmax, ymin, ymax]
+function changeOpacityMarker(range,op){
+	var xmin=range[0];
+	var xmax=range[1];
+	var ymin=range[2];
+	var ymax=range[3];
+	// Adjust marker labels and text
+  	d3.selectAll("line.xmark").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data').split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [+Bcoordstr[0],0.0];
+		if (Bcoord[0] >= xmin && Bcoord[0] <= xmax)
+		{
+			d3.select(this)
+				.transition().duration(transitDuration)
+				.attr("opacity",op);
+		}
+  	});
+  	
+  	// then label text should be moved
+  	d3.selectAll("g.xmark_text").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data')
+  					.split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [+Bcoordstr[0],0.0];
+		if (Bcoord[0] >= xmin && Bcoord[0] <= xmax)
+		{
+			d3.select(this)
+				.transition().duration(transitDuration)
+				.attr("opacity",op);
+		}
+  	});
+
+
+  	d3.selectAll("line.ymark").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data').split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [0.0,+Bcoordstr[0]];
+		if (Bcoord[1] >= ymin && Bcoord[1] <= ymax)
+		{
+			d3.select(this)
+				.transition().duration(transitDuration)
+				.attr('opacity',op);
+		}
+  	});
+  	
+  	// then label text should be moved
+  	d3.selectAll("g.ymark_text").each(function(d,i){
+  		//This number is obtained as a string intitially
+  		var Bcoordstr = d3.select(this)
+  				.attr('data')
+  					.split(',') ;
+  		//so now we store it as an array of numbers
+  		var Bcoord = [0.0,+Bcoordstr[0]];
+		if (Bcoord[1] >= ymin && Bcoord[1] <= ymax)
+		{
+			d3.select(this)
+				.transition().duration(transitDuration)
+				.attr('opacity',op);
+		}
+  	});
+}
+				 
+				 
+//Takes a class name and changes opacity
+function changeOpacity(Tname,onew)
+{
+	d3.selectAll(Tname)
+		.transition().duration(transitDuration)
+		.attr('opacity' , onew );
+}
+				 
+
+// Make a data type opaque/invisible
+function changeOpacityData( type_given, op, pointsToo = true){
+      // change each data type point for each type in type_list
+	type_list.forEach( type => 
+	{
+		if (type == type_given){
+		//perform transformation to each point, indicator line, and label text
+		//first points
+		if(pointsToo == true)
+			{
+			d3.selectAll("circle."+type).each(function(d,i){
+				d3.select(this)
+					.transition().duration(transitDuration)
+					.attr('opacity',op);
+			});
+			}
+		
+		// then indicator lines
+		d3.selectAll("line."+type).each(function(d,i){
+			d3.select(this)
+				.transition().duration(transitDuration)
+				.attr('opacity',op);
+		});
+		
+		// then label text opacity should be changed
+		d3.selectAll("g."+type+"_text").each(function(d,i){
+			d3.select(this)
+				.transition().duration(transitDuration)
+				.attr('opacity',op);
+		});
+		}
+  	});
+}
+
+
+
+//Initializing everything 
+
+
+var _transitions = [
+	{
+		// transition showing d=24 leech lattice
+		transitionForward: () => {
+			setTimeout(()=>  transto(d => map_linear(0.1,0.0001,d)) ,transitDuration);
+			changeOpacityMarker([0,9,0,101],0.0) 	;
+		},
+		transitionBackward:() => {
+			setTimeout(()=>  changeOpacityMarker([0,11,0,101],1.0) ,transitDuration);
+			transto(d => map_linear(0.6,0.015,d));
+		}
+	},
+	{
+		// transition to record bounds
+		transitionForward: () => {
+			setTimeout( () => { 
+			transto(d => map_linear(0.05,0.00000009,d));
+					}, transitDuration);
+			changeOpacityMarker([0,9,0,1001],0.0) 	;
+		},
+		transitionBackward:() => {
+			setTimeout( () => { 
+			changeOpacityMarker([0,9,101.1,1001],1.0) 	;
+					}, transitDuration);
+			transto(d => map_linear(0.1,0.0001,d));
+		}
+	},
+	{
+		//show balls lower bound
+		transitionForward: () => {
+			setTimeout(()=>  {
+				transto(d => map_linear(0.6,0.03,d));
+			},transitDuration);
+			// changeOpacityData("known",0.0,false)
+			// changeOpacityData("record",0.0,false)
+			changeOpacityData("ball",1.0,true)
+		},
+		transitionBackward:() => {
+			//
+			setTimeout( () => changeOpacityData("ball",0.0,true) , transitDuration);
+			transto(d => map_linear(0.05,0.00000009,d));
+		}
+	},
+	{
+		// show vance lower bounds
+		transitionForward: () => {
+			changeOpacityData("vance",1.0,true)
+		},
+		transitionBackward:() => {
+			changeOpacityData("vance",0.0,true)
+		}
+	},
+	{
+		// disable record lattice data
+		// zoom out to compare vance and ball
+		transitionForward: () => {
+			setTimeout( () => { 
+			transto(d => map_linear(0.0446,0.02,d));
+					}, transitDuration);
+			changeOpacityData("known",0.0,true);
+			changeOpacityData("record",0.0,true);
+			changeOpacityMarker([0,9,10.1,1001],1.0) 	;
+		},
+		transitionBackward:() => {
+			setTimeout( () => { 
+			changeOpacityData("known",0.0,true);
+			changeOpacityData("record",0.0,true);
+			changeOpacityMarker([0,9,10.1,1001],0.0) 	;
+					}, transitDuration);
+			transto(d => map_linear(0.6,0.03,d));
+		}
+	},
+	{
+		// change y from c_d to c_d/d
+		transitionForward: () => {
+			setTimeout( () => { 
+			changeOpacityMarker([0,9,0,10.1],1.0) 	;
+					}, transitDuration);
+
+			transto(d => map_rely(0.0455,1.0,d));
+			changeOpacity('g.ylabel2',1.0);
+			changeOpacity('g.ylabel',0.0);
+			//
+		},
+		transitionBackward:() => {
+			setTimeout( () => { 
+			transto(d => map_linear(0.0446,0.02,d));
+			changeOpacity('g.ylabel2',0.0);
+			changeOpacity('g.ylabel',1.0);
+					}, transitDuration);
+
+			changeOpacityMarker([0,9,0,10.1],0.0) 	;
+		}
+	},
+	{
+		//change x axis to logarithmic
+		transitionForward: () => {
+			transto(d => map_logx_rely(1.03,0.9,d));
+		},
+		transitionBackward:() => {
+			transto(d => map_rely(0.0455,1.0,d));
+		}
+	},
+	{
+		// reveal venkatesh 
+		transitionForward: () => {
+			changeOpacityData("venk_small",1.0,true);
+		},
+		transitionBackward:() => {
+			changeOpacityData("venk_small",0.0,true);
+		}
+	},
+	{
+		// reveal amitsur
+		transitionForward: () => {
+			changeOpacityData("amit_small",1.0,true);
+		},
+		transitionBackward:() => {
+			changeOpacityData("amit_small",0.0,true);
+		}
+	},
+	{
+		// reveal venkatesh's cherrypicked data
+		transitionForward: () => {
+			setTimeout( () => { 
+			transto(d => map_logx_rely(0.0298,0.5,d));
+					}, transitDuration);
+			changeOpacityMarker([0.0,100001,0.0,1.0],0.0);
+			changeOpacityData("amit_small",0.0,true);
+			changeOpacityData("venk_small",0.0,true);
+			changeOpacityData("venk_big",1.0,true);
+		},
+		transitionBackward:() => {
+			setTimeout( () => { 
+			changeOpacityMarker([0.0,100001,0.0,1.0],1.0);
+			changeOpacityData("amit_small",1.0,true);
+			changeOpacityData("venk_small",1.0,true);
+			changeOpacityData("venk_big",0.0,true);
+					}, transitDuration);
+			transto(d => map_logx_rely(1.03,0.9,d));
+		}
+	},
+	{
+		// reveal amitsur
+		transitionForward: () => {
+			changeOpacityData("amit_big",1.0,true);
+		},
+		transitionBackward:() => {
+			changeOpacityData("amit_big",0.0,true);
+		}
+	}
+];
+
+
+//mathjax is stupid and it won't automatically parse the SVG file
+//it has to be told seperately to make my equations readable throughout the text
+// the following is copied from https://gist.github.com/larsenmtl/86077bddc91c3de8d3db6a53216b2f47
+setTimeout(() => {
+  
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+  
+  MathJax.Hub.Register.StartupHook("End", function() {
+    setTimeout(() => {
+          oursvg.selectAll('.tick').each(function(){
+          var self = d3.select(this),
+              g = self.select('text>span>svg');
+          g.remove();
+          self.append(function(){
+            return g.node();
+          });
+        });
+      }, 1);
+    });
+  
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, oursvg.node()]);
+  
+}, 1);
+
+</script>

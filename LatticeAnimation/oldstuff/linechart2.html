@@ -1,0 +1,359 @@
+<head>
+	<script src="js/d3.v3.min.js"></script>
+
+</head>
+
+<body>
+	<svg >
+	</svg> 
+
+		<script>
+
+
+//Setting up the transitions
+var _transitions = [],
+_inverse_transitions = [];
+				
+// Just setting up width and height
+	//These are global wid, hei
+var h = +Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+var w = +Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+	//These are wid, hei of the graph (without the margin)
+var width = 600;
+var height = 600;
+  const color1 = "magenta"
+  const color2 = "green"
+
+//These are the attributes for the margin
+var margin = {top: 50, right: 20, bottom: 50, left: 20};
+
+// Just something to highlight what's going on
+const svg = d3.select('svg');
+	svg.style('background-color','white');
+	svg.style('width',w);
+	svg.style('height',h);
+
+
+//Will create a smaller area for the actual chart to be in 
+const insvg = svg.append('g')
+.attr("transform", "translate(" + ( w/2 + margin.left - width/2) + "," + (h/2 +  margin.top - height/2) +  ")");
+
+
+//Let's make some axes
+
+	//x-y axes
+var x = d3.scaleLinear()
+	.domain([0,1])
+	.range([0, width]);
+
+var y = d3.scaleLinear()
+	.domain([0,1])
+	.range([height, 0]);
+
+	
+	//I don't know what this does, 				
+//var z = d3.scale.category10();
+
+
+const plotour =  (darray,type) => {
+
+insvg.append('text')
+  .text("Rate of the code")
+ .attr('text-anchor', 'middle')
+  .attr("font-size","2.3em")
+  .attr("letter-spacing","normal")
+ .attr('transform', " translate("+ -1* width/10 + " ,"+height/2+")  rotate(-90)") 
+  .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+  .attr('class','ytext');
+
+insvg.append('text')
+  .text("Relative minimum distance")
+ .attr('text-anchor', 'middle')
+  .attr("font-size","2.3em")
+  .attr("letter-spacing","normal")
+ .attr('transform', " translate("+  width/2 + " ,"+(height + height/10)+")") 
+  .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+  .attr('class','xtext');
+
+insvg.append('text')
+  .text("Plotting points related to codes for n < 33")
+ .attr('text-anchor', 'middle')
+  .attr("font-size","2.3em")
+  .attr("font-weight","bold")
+  .attr("letter-spacing","normal")
+ .attr('transform', " translate("+ ( width/2) + " ,"+(height + 2.5*height/10)+")") 
+  .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+  .attr('class','maintext');
+insvg.append('g').call(d3.axisLeft(y));
+
+//	      insvg.append('text')
+//		.text("n = 2")
+//	      .attr('fill',d3.interpolateLab(color1, color2)( 2/31))
+//		.attr("font-size","3.3em")
+//		.attr("font-weight","bold")
+//		.attr("letter-spacing","normal")
+//	       .attr('transform', " translate("+ ( width + width/16 ) + " ,"+(height + 2.5*height/10)+")") 
+//		.attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+//		.attr('class','changingtext');
+
+
+	      insvg.append('g').call(d3.axisLeft(y));
+	      insvg.append('g').call(d3.axisBottom(x))
+	       .attr('transform', "translate(0,"+height+")"); 
+
+
+
+insvg.selectAll('rect')
+	.data(darray)
+	.enter().append('circle')
+		.attr('class',d => type+d.n)
+		.attr('cx',d=>x(d.d/d.n))
+		.attr('cy',d=>y(d.k/d.n))
+		.attr('r',d => 6.0/Math.sqrt(d.n))
+    .attr('fill',d => d3.interpolateLab(color1, color2)( d.n/31))
+		.attr('opacity',1);
+
+
+};
+
+
+
+// Draw data from linear file, perform our operation
+d3.csv('linear.csv').then(darray => {
+	console.log(darray);
+	plotour(darray,"type");
+}
+);
+
+// Draw data from cylic file, perform our operation
+d3.csv('cyclic2.csv').then(darray => {
+	console.log(darray);
+	plotour(darray,"ctype");
+}
+);
+
+
+_transitions.push(
+	( ) => 
+	{
+	for(thisnum=2; thisnum<=33;thisnum++)
+	  {
+
+	d3.selectAll('circle.ctype'+thisnum)
+     .transition().duration(600)
+	.transition().delay(100*(thisnum-4))
+      .attr("r","5")
+      .attr("opacity","0.6");
+
+			  d3.selectAll('text.maintext')
+			.transition().delay((thisnum-4)*100)
+			  .text(" Highlighting cyclic codes fo n = "+thisnum);
+
+	  }
+			  d3.selectAll('text.maintext')
+			.transition().delay((thisnum-4)*100)
+			  .text("Cyclic codes are highlighted");
+	}
+);
+
+_transitions.push(
+	( ) => 
+	{
+
+	  var somenum = 7;
+	  console.log(somenum)
+	for(thisnum=2; thisnum<=35;thisnum++)
+	  {
+
+	d3.selectAll('circle.type'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	d3.selectAll('circle.ctype'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	  }
+
+	  d3.selectAll('text.maintext')
+	  .text("Highlighted cyclic codes for  n = "+(somenum));
+	
+
+	d3.selectAll('circle.type'+somenum)
+     .transition().duration(600)
+      .attr("opacity","1.0");
+
+	d3.selectAll('circle.ctype'+somenum)
+     .transition().duration(600)
+      .attr("opacity","0.6");
+
+	}
+);
+_transitions.push(
+	( ) => 
+	{
+
+	  var somenum = 15;
+	  console.log(somenum)
+	for(thisnum=2; thisnum<=35;thisnum++)
+	  {
+
+	d3.selectAll('circle.type'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	d3.selectAll('circle.ctype'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	  }
+
+	  d3.selectAll('text.maintext')
+	  .text("Highlighted cyclic codes for  n = "+(somenum));
+	
+
+	d3.selectAll('circle.type'+somenum)
+     .transition().duration(600)
+      .attr("opacity","1.0");
+
+	d3.selectAll('circle.ctype'+somenum)
+     .transition().duration(600)
+      .attr("opacity","0.6");
+
+	}
+);
+
+_transitions.push(
+	( ) => 
+	{
+
+	  var somenum = 21;
+	  console.log(somenum)
+	for(thisnum=2; thisnum<=35;thisnum++)
+	  {
+
+	d3.selectAll('circle.type'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	d3.selectAll('circle.ctype'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	  }
+
+	  d3.selectAll('text.maintext')
+	  .text("Highlighted cyclic codes for  n = "+(somenum));
+	
+
+	d3.selectAll('circle.type'+somenum)
+     .transition().duration(600)
+      .attr("opacity","1.0");
+
+	d3.selectAll('circle.ctype'+somenum)
+     .transition().duration(600)
+      .attr("opacity","0.6");
+
+	}
+);
+_transitions.push(
+	( ) => 
+	{
+
+	  var somenum = 23;
+	  console.log(somenum)
+	for(thisnum=2; thisnum<=35;thisnum++)
+	  {
+
+	d3.selectAll('circle.type'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	d3.selectAll('circle.ctype'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	  }
+
+	  d3.selectAll('text.maintext')
+	  .text("Highlighted cyclic codes for  n = "+(somenum));
+	
+
+	d3.selectAll('circle.type'+somenum)
+     .transition().duration(600)
+      .attr("opacity","1.0");
+
+	d3.selectAll('circle.ctype'+somenum)
+     .transition().duration(600)
+      .attr("opacity","0.6");
+
+	}
+);
+_transitions.push(
+	( ) => 
+	{
+
+	  var somenum = 25;
+	  console.log(somenum)
+	for(thisnum=2; thisnum<=35;thisnum++)
+	  {
+
+	d3.selectAll('circle.type'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	d3.selectAll('circle.ctype'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	  }
+
+	  d3.selectAll('text.maintext')
+	  .text("Highlighted cyclic codes for  n = "+(somenum));
+	
+
+	d3.selectAll('circle.type'+somenum)
+     .transition().duration(600)
+      .attr("opacity","1.0");
+
+	d3.selectAll('circle.ctype'+somenum)
+     .transition().duration(600)
+      .attr("opacity","0.6");
+
+	}
+);
+_transitions.push(
+	( ) => 
+	{
+
+	  var somenum = 31;
+	  console.log(somenum)
+	for(thisnum=2; thisnum<=35;thisnum++)
+	  {
+
+	d3.selectAll('circle.type'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	d3.selectAll('circle.ctype'+thisnum)
+     .transition().duration(600)
+      .attr("opacity","0.0");
+
+	  }
+
+	  d3.selectAll('text.maintext')
+	  .text("Highlighted cyclic codes for  n = "+(somenum));
+	
+
+	d3.selectAll('circle.type'+somenum)
+     .transition().duration(600)
+      .attr("opacity","1.0");
+
+	d3.selectAll('circle.ctype'+somenum)
+     .transition().duration(600)
+      .attr("opacity","0.6");
+
+	}
+);
+		</script>
+</body>

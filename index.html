@@ -1,0 +1,1212 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>ESI seminar</title>
+
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/white.css" id="theme">
+
+		<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+
+					<br>
+					<h1> 
+					  Lattice packings through division algebras
+					</h1>
+					<br>
+					<br>
+
+					<p> Presentation by
+					<h3 > Nihar P. Gargava </h3>
+					<br>
+					Doctoral student,
+					<br>
+						Chair of Number Theory,<br>
+						Section of Mathematics,
+					<br>
+						École Polytechnique Fédérale de Lausanne, 
+					</p>
+					<br>
+
+				</section>
+				<!-- <section style="text-align: left;"> -->
+				<!-- 	<h2> -->
+				<!-- 		Introduction -->
+				<!-- 	</h2> -->
+				<!-- 	<section> -->
+
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+
+				<!-- 		Suppose we have $\{a_1, a_2, ... , a_n \} \in m \Z$ with $a_i \ge 0 $ and suppose that $$\frac{1}{n}\sum_{i=1}^{n} a_i < m.$$ -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		What can we conclude about the numbers $a_i$? --> 
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"><b>Answer</b>: At least one of them is $0$. -->
+				<!-- 		</p> -->
+				<!-- 		<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   "> -->
+				<!-- 			<h4 style="display: inline-block;" > Lemma  </h4> <i> (Integrality gap)</i> --> 
+				<!-- 			<br> -->
+				<!-- 			Let $X$ be a probability space and $\Phi: X\to \R^{\ge 0}$ be a random variable that takes values only in $m \Z$ for some integer $m$. --> 
+				<!-- 			<br> -->
+				<!-- 			If $\int_X \Phi < m$, then there exists some $x \in X$ such that $\Phi(x) = 0$. -->
+
+				<!-- 		</div> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		For our application, we will set $X$ to be a set of lattices. -->
+				<!-- 		</p> -->
+				<!-- 	</section> -->
+
+				<!-- </section> -->
+				<section style="text-align: left;">
+					<h2>
+						What is a lattice packing?
+					</h2>
+					<section>
+						<div style="float: left;  width:50%;">
+							<p class="fragment fade-in-then-semi-out">
+						\(\DeclareMathOperator{\R}{\mathbb{R}}\)\(\DeclareMathOperator{\Z}{\mathbb{Z}}\)\(\DeclareMathOperator{\C}{\mathbb{C}}\)\( \DeclareMathOperator{\F}{\mathbb{F}}\)Consider $\R^d$ with the standard inner product. A lattice $\Lambda\subseteq \R^d$ is a discrete subgroup such that the quotient space $\R^d / \Lambda$ has a finite induced volume.
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							Given a lattice $\Lambda$, choose $r > 0$ and consider the open balls $\{ B_{r}\left( v \right)\}_{v \in \Lambda}$ such for any $v_1, v_2 \in \Lambda$, $B_{r}(v_1) \cap B_{r}(v_2) \neq \emptyset \Rightarrow v_1 = v_2$.
+							</p>
+							<!-- Empty fragments are added to keep the d3 stuff in sync -->
+							<p class="fragment fade-in-then-semi-out">
+
+							<p class="fragment fade-in-then-semi-out">
+
+							Then $(\Lambda,r)$ is called a lattice sphere packing, or simply lattice packing inside $(\R^d, \langle \ , \ \rangle)$.
+							</p>
+
+							<p class="fragment fade-in-then-semi-out">
+							Packing density of a lattice packing is:
+							\[
+							\lim_{R \rightarrow \infty} \frac{\mu\left( B_{R}(0) \cap \left(  \bigsqcup_{v \in \Lambda} B_{r}(v) \right) \right)}{\mu\left( B_{R}(0) \right)} = 
+							\frac{\mu( B_{r}(0) )}{ \mu(\R^d / \Lambda)}
+							\]
+
+							It is always in the interval $]0,1[$.
+							</p>
+
+
+							<p class="fragment fade-in-then-semi-out">
+						</div>
+						<div style="float: right;  width:40%; ">
+							<h4 style="text-align: center">
+								<br>
+								Visualizing in $\R^2$
+							</h4>
+							<div class="fig-container no-margin-top" data-preload data-file="LatticeAnimation/lattice_density.html"></div>
+						</div>
+						<br>
+
+					</section>
+
+					<section>
+						<div style="float: left;  width:50%; ">
+
+							<p class="fragment fade-in-then-semi-out">
+							However, note that $2r$ can be at most $$m(\Lambda) = \min_{v \in \Lambda \setminus \{0\}} ||v|| ,$$ otherwise some balls will begin to intersect.
+
+							<p class="fragment fade-in-then-semi-out">
+							<!-- EMPTY -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							The goal is to maximize packing density. So take $r = \frac{1}{2}m(\Lambda)$. In that case packing density will be equal to $$\frac{\mu( B_{m(\Lambda)/2}(0) )}{ \mu(\R^d / \Lambda)},$$ and is independent of scaling. 
+
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							To maximize this over all $\Lambda$, it is sufficient to maximize over unit covolume lattices (i.e. \(\mu(\R^d/\Lambda)\) = 1)
+
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+						</div>
+						<div style="float: right;  width:40%; ">
+							<h4 style="text-align: center">
+								<br>
+								Visualizing in $\R^2$
+							</h4>
+							<div class="fig-container no-margin-top" data-preload data-file="LatticeAnimation/lattice_Cd.html"></div>
+						</div>
+					</section>
+					<section>
+						<div style="float: left;  width:50%; ">
+
+							<p class="fragment fade-in-then-semi-out">
+							So we somehow find 
+							\[
+							\sup_{\substack{\Lambda \subseteq \R^d \\ \mu(\R^d/\Lambda)=1}}  \mu\left(B_{m(\Lambda)/2}(0) \right)
+							\]
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							\[
+							=							\sup_{ g \in SL_d(\R)} \frac{1}{2^d} \mu\left(B_{m(g \Z^d)}(0) \right)
+							\]
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							which we use to define our dimensional constant $c_d$
+							\[
+							\colon=	\frac{1}{2^d} 		c_d
+							\]
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							<p class="fragment fade-in-then-semi-out">
+							<p class="fragment fade-in-then-semi-out">
+							<p class="fragment fade-in-then-semi-out">
+							<p class="fragment fade-in-then-semi-out">
+							Putting it together, we have
+							\[
+							c_{d} = \sup\left\{ \mu\left( B_{r}(0)\right) \ | \ r> 0,\exists~g \in SL_d(\R) \text{ and }  B_{r}(0) \cap g\Z^d = \{ 0\}\right\}.
+							\]
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							Clearly, \(~c_d \in~]0,2^d[\), so supremum exists!
+							</p>
+						</div>
+						<div style="float: right;  width:40%; ">
+							<h4 style="text-align: center">
+								<br>
+								Visualizing in $\R^2$
+							</h4>
+							<div class="fig-container no-margin-top" data-preload data-file="LatticeAnimation/lattice_Cd2.html"></div>
+						</div>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<h2>
+						What is known about $~c_d$?
+					</h2>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						The exact value of the constant $c_d$ is known only for $d = \{ 1,2,3,4,5,6,7,8,24\}$. For other $d$, we want to understand the asymptotic behaviour. In this talk, we will only focus on lower bounds.
+						</p>
+
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="text-align: center">
+								Some asymptotic lower bounds for large dimensions
+							</h4>
+
+							<table style="width:100%">
+								<tr>
+									<th>Lower bound</th>
+									<th> Contribution of </th>
+									<th> Dimensions covered</th>
+								</tr>
+								<tr>
+									<td>$c_d \ge 1$</td>
+									<td>Minkowksi (1896) </td>
+									<td>$\forall ~d \ge 1$</td>
+								</tr>
+								<tr>
+									<td>$c_d \ge 2(d-1)$</td>
+									<td>Ball (1992)</td>
+									<td>$\forall ~d \ge 1$</td>
+								</tr>
+								<tr>
+									<td>$c_{4n} \ge 8.8n$</td>
+									<td>Vance (2011)</td>
+									<td>$d=4n , n \ge 1$</td>
+								</tr>
+								<tr>
+									<td>$c_{2\varphi(n)} \ge n$</td>
+									<td>Venkatesh (2013)</td>
+									<td>$d=2\varphi(k)$ for some $k$</td>
+								</tr>
+							</table> 	
+
+						</div>
+						<p class="fragment fade-in-then-semi-out">
+						Since $\lim \inf \left( \frac{\varphi(n)}{n} \log \log n\right) = e^{- \gamma}$, the last bound is the best lower bound (among these, and overall) on $c_d$ in infinitely many dimensions. The first dimension where it outperforms all others in this list is $d=960$.
+						</p>
+
+
+					</section>
+
+					<section>
+						<div style="float: left;  width:40%; ">
+						<p class="fragment fade-in-then-semi-out">
+						<!-- // transition showing d=24 leech lattice -->
+						Explicit lattice constructions can help us only upto $d \le 300$.
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						<!-- // transition to record bounds -->
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						<!-- //show balls lower bound -->
+						<span style="color:red;"> (Ball, 1992) </span>, the lower bound is as indicated.
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						<!-- // show vance lower bounds -->
+						<span style="color:purple;"> (Vance, 2011) </span>, using a probabilistic argument on lattices that lie in vector-space over quaternion division algebra. Works only when $4 \mid d$.
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						<!-- // disable record lattice data -->
+						<!-- // zoom out to compare vance and ball -->
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						<!-- // change y from c_d to c_d/d -->
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						<!-- //change x axis to logarithmic -->
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						<!-- // reveal venkatesh --> 
+						<span style="color:violet;"> (Venkatesh, 2013) </span>, using a probabilistic argument on lattices that lie in $(K \otimes_\mathbb{Q} \mathbb{R})^2$, $K$ is a cyclotomic field.
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						<span style="color:green;"> (G., 2021) </span>, using a probabilistic argument on lattices that lie in $(D \otimes_\mathbb{Q} \mathbb{R})^2$, $D$ is a division algebra over $\mathbb{Q}$.
+						<!-- // reveal amitsur -->
+						</p>
+
+
+
+						</div>
+						<div style="float: left;  width:60%; ">
+							<h4 style="text-align: center">
+								<br>
+								Comparison of bounds
+							</h4>
+							<div class="fig-container no-margin-top" data-preload data-file="LatticeAnimation/data_plot.html"></div>
+						</div>
+
+					</section>
+
+					<section>
+
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Theorem  </h4> <i> (G. 2021)</i> 
+							<br>
+  Let $D$ be a finite-dimensional division algebra over $\mathbb{Q}$. Let $\mathcal{O} \subseteq D$ be an order in $D$ and $G_{0} \subseteq \mathcal{O}$ be a finite group embedded in the multiplicative group of $D$. Then if $d=2\dim_{\mathbb{Q}}D$, then
+  \begin{align}
+    c_{d} \ge \# G_{0}.
+  \end{align}
+
+						</div>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						To recover Venkatesh's result, set $D=\mathbb{Q}(\mu_n)$, $\mathcal{O} = \mathbb{Z}[\mu_n]$ and $G_0 = \langle \mu_n \rangle$. Hence, this gives
+						\begin{align}
+						  c_{2 \varphi(n)} \ge n
+						\end{align}
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						The cherrypicked sequence of Venkatesh achieves an asymptotic growth of $O( d \log \log d )$. This is achieved by setting $K$ as the $n$th cyclotomic field where $n=\prod_{p < N} p$.
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						The new result provides more freedom to cherrypick sequences. 
+						Instead of choosing a sequence of cyclotomic fields, we can now choose sequences of $\mathbb{Q}$-divison algebras. However, no such sequence will be able to give an asymptotic result strictly better than $O( d \log \log d )$. Improvements in individual dimensions is still possible, as shown before.
+						</p>
+
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<h2>
+					The probabilistic method
+					</h2>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						To show $c_d \ge K$, we must prove the existence of $g \in SL_d(\R)$ such that the origin centered ball $B$ with $\mu(B) = K$ has $g \Z^d \cap B = \{0\} $
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						This is an optimization problem on the space
+						\[ 
+						X_d:=  \{ \Lambda \subset \mathbb{R}^{d} | \ \mu(\mathbb{R}^{d} / \Lambda) = 1 \} = \{ g\Z^d \ | \ g \in SL_d(\R) \} \]
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						\[
+						\simeq SL_d(\mathbb{R})/SL_d(\mathbb{Z}).
+						\]
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						A priori, this is a bijection of sets. But now we can pull back the topology and the measure from $SL_d(\R)/SL_d(\Z)$.
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						$SL_d(\R)$ has the topology of a locally compact group. 
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						$SL_d(\R)$ is unimodular. $SL_d(\Z)$ is a discrete subgroup inside $SL_d(\R)$ and therefore there is a unique left $SL_d(\R)$-invariant measure on $SL_d(\R)/SL_d(\Z)$.
+						</p>
+					</section>
+					<section>
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Proposition  </h4> <i>  </i> 
+							<br>
+
+							There exists a unique (upto scaling) natural measure on $SL_d(\R)/SL_d(\Z)$, left-invariant under $SL_d(\R)$ action on cosets. 
+							<br>
+							Furthermore, $SL_d(\mathbb{R})/SL_d(\mathbb{Z})$ under this has a <b>bounded</b> total measure.
+						</div>
+						<!-- <p class="fragment fade-in-then-semi-out"> -->
+						<!-- One can show this by constructing a "coarse" fundamental domain of the quotient space. -->
+						<!-- </p> -->
+						<p class="fragment fade-in-then-semi-out">
+						This gives us a probability space. Hence we can talk about random unit covolume lattices.
+						</p>
+
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<h2>
+						Lattice-sum function
+					</h2>
+					<section > 
+						<div style="float: left;  width:50%; ">
+
+							<p class="fragment fade-in-then-semi-out">
+							Consider a bounded measurable function with compact support $f:\R^d \rightarrow \R$. 
+							<br>	 e.g. the indicator function of a ball.
+							<p class="fragment fade-in-then-semi-out">
+							<!-- showing test function -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							With this, we can now construct the lattice-sum function $\Phi_f(\Lambda): X_d \rightarrow \R$, given as \[  \Phi_f(\Lambda) = \sum_{v \in \Lambda \setminus \{ 0\}}^{} f(v).\]
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							<!-- showing the lattice-sum -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							Since we can generate random lattices, we can talk about the expected value of $\Phi_f(\Lambda)$.
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							Let us try to do this experimentally! Let us sample over a set $S \subseteq X_d$ of lattices.
+							</p>
+							<!-- Doing an experiment here! -->
+							<p class="fragment fade-in-then-semi-out">
+							<!-- EMPTY -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							<!-- EMPTY -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							<!-- EMPTY -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							<!-- computer runs a long code after this step -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							<!-- EMPTY -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							<!-- EMPTY -->
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							So we see that it is almost the integral.
+							</p>
+						</div>
+						<div style="float: right;  width:50%; ">
+							<h4 style="text-align: center">
+								<br>
+								Visualizing in $\R^2$
+							</h4>
+							<div class="fig-container no-margin-top" data-preload  data-file="LatticeAnimation/lattice_SMT.html"></div>
+						</div>
+					</section>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						What we are empirically confirming is the following.
+						</p>
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Theorem  </h4> <i> (Siegel, 1945) </i> 
+							<br>
+
+							Suppose $f:\mathbb{R}^{d} \rightarrow \mathbb{R}$ is a compactly supported bounded measurable function. Then, the following holds.
+							\begin{align}
+							\int_{X_d} \Phi_f = \int_{SL_d(\mathbb{R})/SL_d(\mathbb{Z})}^{} \left( \sum_{v \in g \mathbb{Z}^{d} \setminus \{ 0\}}^{}f(v) \right) dg = \int_{\mathbb{R}^{d}}^{} f(x) dx,
+							\end{align}
+							where the $dx$ on the right-hand side is the usual Lebesgue measure on $\mathbb{R}^{d}$ and $dg$ is the unique $SL_d(\mathbb{R})$-invariant probability measure on $SL_d(\mathbb{R})/SL_d(\mathbb{Z})$.
+
+						</div>
+					</section>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						But as you saw that for any $\Lambda \in X_d$, when $f$ is the indicator of a ball, we must have 
+						$\Phi_f(\Lambda) \in \{0,2,4,6,...\}$. That's because balls are symmetric. $$v \in \text{supp}(f) \cap  ( \Lambda \setminus \{0 \}) \Rightarrow  -v \in \text{supp}(f) \cap  ( \Lambda \setminus \{0 \}).$$
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						If $f$ is the indicator function of a ball of volume $2- \varepsilon$, then this tells us that for any dimension $d$
+						$$\int_{X_d} \Phi_f = 2 - \varepsilon$$
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						<b>Conclusion</b>: There exists some lattice $\Lambda \in X_d$ such that $\Phi_f(\Lambda) = 0$. That is, there is some lattice of unit covolume that intersects trivially with an origin centered ball of volume $ 2 - \varepsilon$.
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						<b>Another conclusion</b>: $c_d \ge 2$ for all dimensions $d$!
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						Both Venkatesh and the new result use this idea. What we want is to find expectation of the lattice sum over a smaller subset of lattices that have a larger group of symmetries.
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						For Venkaesh, the group of symmetries is always a cyclic group.
+						For the new result, the symmetries are non-commutative.
+						</p>
+					</section>
+
+				</section>
+				<!-- <section style="text-align: left;"> -->
+				<!-- 	<h2> -->
+				<!-- 		Controlled randomness -->
+				<!-- 	</h2> -->
+
+				<!-- 	<section > --> 
+				<!-- 		<div style="float: left;  width:50%; "> -->
+
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			Choose a prime number $p$. Consider the map $\pi_p:\Z^d \to \F_p^d$. -->
+				<!-- 			</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		$\F_p^d \setminus \{0\}$ is a disjoint union of lines. -->
+				<!-- 		$$\F_p^d \setminus \{0\}= \bigsqcup_{v \in (\F_p^d\setminus\{0\} )/\F_p^* }(\F_p v \setminus \{0\}) $$ -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		This implies that -->
+				<!-- 		$$\Z^d \setminus p \Z^d = \bigsqcup_{v \in (\F_p^d\setminus\{0\} )/\F_p^* } \pi_p^{-1}(\F_p v \setminus \{0\}) $$ -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		<1!-- Empty transition --1> -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		</p> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		Let us put all these sub-lattices in one set -->
+				<!-- 		$$\mathcal{L}_p'= \{ \pi_p^{-1}(\F_p v) \ | \ v \in \F_p^d \setminus \{ 0 \} \}.$$ -->
+				<!-- 		</p> -->
+				<!-- 		</div> -->
+				<!-- 		<div style="float: right;  width:50%; "> -->
+				<!-- 			<h4 style="text-align: center"> -->
+				<!-- 				<br> -->
+				<!-- 				Visualizing in $\R^2$ -->
+				<!-- 			</h4> -->
+				<!-- 			<div class="fig-container no-margin-top" data-preload data-file="LatticeAnimation/lattice_rogers.html"></div> -->
+				<!-- 		</div> -->
+				<!-- 	</section> -->
+				<!-- 	<section > --> 
+
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			However the lattices in $\mathcal{L}_p'$  are not unit covolume. -->
+
+<!-- But each one of them has a covolume of $p^{d-1}$. -->
+				<!-- 			</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			So appropriately normalizing, elements of this set become unit covolume lattices. -->
+				<!-- 			$$\mathcal{L}_p= \{  C_p \pi_p^{-1}(\F_p v) \ | \ v \in \F_p^d \setminus \{ 0 \} \},$$ when $C_p = p^{-\left( 1- \frac{1}{d} \right)} $. <br> -->
+				<!-- 			</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			So $\mathcal{L_p} \subseteq X_d$ is a set of unit covolume lattices, with $\#\mathcal{L}_p \to \infty$ as $p \to \infty$. -->
+				<!-- 			</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			Now as before let $f:\R^d \to \R$ be a compactly supported Riemann integrable function. Let $\Phi_f:X_d \to \R$ again be the lattice-sums of $f$. -->
+				<!-- 			</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			So let us try to find $\Phi_f$ on $\mathcal{L}_p$. We will assume that the prime $p$ is very large. -->
+				<!-- 			\begin{align} -->
+				<!-- 			\frac{1}{\#\mathcal{L}_p}\sum_{\Lambda \in \mathcal{L}_p} \Phi_f(\Lambda) -->
+				<!-- 			\end{align} -->
+				<!-- 			</p> -->
+				<!-- 	</section> -->
+				<!-- 	<section > --> 
+				<!-- 		<div style="float: left;  width:50%; "> -->
+
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			By construction, we have that --> 
+				<!-- 			$$ C_p\Z^d \setminus p C_p \Z^d = \bigsqcup_{ \Lambda \in \mathcal{L}_p } \Lambda \setminus(p C_p \Z^d) $$ -->
+				<!-- 		</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			Using this and some manipulation gives us -->
+				<!-- 			\begin{align} -->
+				<!-- 			 & \frac{1}{\#\mathcal{L}_p}\sum_{\Lambda \in \mathcal{L}_p} \Phi_f(\Lambda) \\ & = \sum_{v \in (pC_p\Z^d) \setminus \{0\} } f(v) 	 +    \frac{1}{\#\mathcal{L}_p}  \sum_{v \in C_p \Z^d \setminus ( pC_p \Z^d )} f(v) . -->
+				<!-- 			 \end{align} -->
+				<!-- 		</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			Since $pC_p = p^{\frac{1}{d}} \to \infty$ as $p \to \infty$, the non-zero points of $pC_p \Z^d $ are pushed away from the support of $f$. -->
+				<!-- 		</p> -->
+				<!-- 		</div> -->
+				<!-- 		<div style="float: right;  width:50%; "> -->
+				<!-- 			<h4 style="text-align: center"> -->
+				<!-- 				<br> -->
+				<!-- 				Visualizing in $\R^2$ -->
+				<!-- 			</h4> -->
+				<!-- 			<div class="fig-container no-margin-top" data-file="LatticeAnimation/lattice_rogers2.html"></div> -->
+				<!-- 		</div> -->
+				<!-- 	</section> -->
+
+				<!-- 	<section > --> 
+
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			So for large $p$, we can ignore the first term. <b>Or</b>, we can assume that the coeffecient behind the first term was $ (\# \mathcal{L}_p)^{-1}$. So we get that --> 
+				<!-- 			\begin{align} -->
+				<!-- 			 \frac{1}{\#\mathcal{L}_p}\sum_{\Lambda \in \mathcal{L}_p} \Phi_f(\Lambda) & =     \frac{1}{\#\mathcal{L}_p}  \sum_{v \in C_p \Z^d \setminus ( pC_p \Z^d )} f(v) +\frac{1}{\#\mathcal{L}_p}  \sum_{v \in (pC_p\Z^d) \setminus \{0\} } f(v) \\ -->
+				<!-- 			 & =     \frac{1}{\#\mathcal{L}_p}  \sum_{v \in C_p \Z^d \setminus \{0\} } f(v) . -->
+				<!-- 			 \end{align} -->
+				<!-- 			</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			And now, <b>shocking fact!</b><br> -->
+				<!-- 			$ ( C_p^d \# \mathcal{L_p} )\to 1$ as $p \to \infty$ (Easy combinatorics exercise.) -->
+				<!-- 			</p> -->
+				<!-- 			<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 			So in fact, as $p \to \infty$, the sum on the right converges to the Riemann integral of $f$ on $\R^d$. -->
+				<!-- 			$$     \frac{1}{\#\mathcal{L}_p}  \left( \sum_{v \in (\# \mathcal{L}_p)^{\frac{1}{d}} \Z^d \setminus \{0\} } f(v) \right) \to \int_{\R^d} f(x) dx . $$ -->
+				<!-- 			</p> -->
+				<!-- 	</section> -->
+				<!-- 	<section> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		What we have managed to show (with proof!) is -->
+				<!-- 		</p> -->
+				<!-- 		<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   "> -->
+				<!-- 			<h4 style="display: inline-block;" > Theorem  </h4> <i> (Rogers, 1947) </i> --> 
+				<!-- 			<br> -->
+
+				<!-- 			Let $p$ be an arbitrary prime, $\mathbb{F}_p$ be the field with $p$ elements and let $\pi_p:\mathbb{Z}^{d} \rightarrow \mathbb{F}_p^{d}$ be the natural coordinate-wise projection map. --> 
+
+				<!-- 			Let $\mathcal{L}_p$ be the set of sub-lattices of $\mathbb{Z}^{d}$ that are pre-images of one-dimensional subspaces in this projection map scaled to become unit covolume, i.e. $$\mathcal{L}_p = \{ C_p \pi_p^{-1}( \mathbb{F}_p v) \ | \ v \in \mathbb{F}_p^d \setminus \{ 0\} \}, C_p = p^{-\left(1-\frac{1}{d}\right)} .$$ -->
+
+				<!-- 			Consider a compactly supported continuous function $f:\mathbb{R}^{d} \rightarrow \mathbb{R}$ and the lattice-sum function $\Phi_f:X_d \rightarrow \mathbb{R}$ as defined above. Then the following holds. -->
+				<!-- 			\begin{align} -->
+				<!-- 			\lim_{ p \rightarrow \infty}\left[ \frac{1}{\# {\mathcal{L}}_p}\sum_{ \Lambda \in {\mathcal{L}}_p} \Phi_{f}\left( \Lambda\right) \right] = \int_{\mathbb{R}^{d}} f(x) dx. -->
+				<!-- 			\end{align} -->
+
+
+				<!-- 		</div> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		After using the integrality gap lemma, this is a constructive proof of $c_d \ge 2$. -->
+				<!-- 		</p> -->
+				<!-- 	</section> -->
+
+				<!-- </section> -->
+				<!-- <section style="text-align: left;"> -->
+				<!-- 	<h2> -->
+				<!-- 		What is known about $~c_d$? -->
+				<!-- 	</h2> -->
+				<!-- 	<section> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		These bounds don't perform well in low dimensions! -->
+				<!-- 		</p> -->
+
+				<!-- 		<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   "> -->
+				<!-- 			<h4 style="text-align: center"> -->
+				<!-- 				Table of comparison of these lower bounds</h4> -->
+
+				<!-- 			<table style="width:100%"> -->
+				<!-- 				<tr> -->
+				<!-- 					<th>Dimension $d$</th> -->
+				<!-- 					<td>2</td> -->
+				<!-- 					<td>3</td> -->
+				<!-- 					<td>4</td> -->
+				<!-- 					<td>8</td> -->
+				<!-- 					<td>12</td> -->
+				<!-- 					<td>16</td> -->
+				<!-- 					<td>24</td> -->
+				<!-- 					<td>48</td> -->
+				<!-- 					<td>72</td> -->
+				<!-- 				</tr> -->
+				<!-- 				<tr> -->
+				<!-- 					<th>Lower bound from lattice constructions</th> -->
+				<!-- 					<td>$3.628$</td> -->
+				<!-- 					<td>$5.925$</td> -->
+				<!-- 					<td>$9.867$</td> -->
+				<!-- 					<td>$64.94$</td> -->
+				<!-- 					<td>$202.6$</td> -->
+				<!-- 					<td>$963.9$</td> -->
+				<!-- 					<td>$1.618$ $\times 10^4$</td> -->
+				<!-- 					<td>$6.524$ $\times 10^6$</td> -->
+				<!-- 					<td>$8.881$ $\times 10^8$</td> -->
+				<!-- 				</tr> -->
+				<!-- 				<tr> -->
+				<!-- 					<th>Lower bound from the table before</th> -->
+				<!-- 					<td>$2$</td> -->
+				<!-- 					<td>$3$</td> -->
+				<!-- 					<td>$8.8$</td> -->
+				<!-- 					<td>$17.6$</td> -->
+				<!-- 					<td>$28.4$</td> -->
+				<!-- 					<td>$35.2$</td> -->
+				<!-- 					<td>$52.8$</td> -->
+				<!-- 					<td>$105.6$</td> -->
+				<!-- 					<td>$158$</td> -->
+				<!-- 				</tr> -->
+				<!-- 			</table> --> 	
+
+				<!-- 		</div> -->
+				<!-- 		<p class="fragment fade-in-then-semi-out"> -->
+				<!-- 		However, efforts of constructing explicit lattice have not been so fruitful and already in dimensions $d > 1000$, one of the mentioned asymptotic bounds is the best possible known lower bound. -->
+				<!-- 		</p> -->
+				<!-- 	</section> -->
+				<!-- </section> -->
+				<section style="text-align: left;">
+					<h2>
+						Venkatesh's lower bound
+					</h2>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						The idea is to take a <b> nice</b> enough subcollection $Y_d \subseteq X_d$ of lattices and average the lattice-sum function $\Phi_f$ over them.
+						</p>
+					<!-- </section> -->
+				<!-- </section> -->
+				<!-- <section style="text-align: left;"> -->
+					<!-- <h2> -->
+					<!-- 	Lattices with a cyclic group symmetry -->
+					<!-- </h2> -->
+					<!-- <section> -->
+					<!-- 	<p class="fragment fade-in-then-semi-out"> -->
+					<!-- 	The following is Venkatesh's construction. -->
+					<!-- 	</p> -->
+
+					<!-- 	<p class="fragment fade-in-then-semi-out"> -->
+					<!-- 	Start with $K = \mathbb{Q}[\mu_n]$ , is the $n$th cyclotomic number field. Then $K_{\R}= K\otimes_{\mathbb{Q}}\R$ is a $\varphi(n)$-dimensional real vector space. Set $d = 2 \varphi(n)$ -->
+					<!-- 	</p> -->
+					<!-- 	<p class="fragment fade-in-then-semi-out"> -->
+					<!-- 	Take $\R^{d} \simeq   K_{\R}^{\oplus 2}$. Identify $\Z^{2\varphi(n)}$ with $\mathcal{O}_K^{\oplus 2}$, two copies of the ring of integers in this vector space. Take $G = \Z/n\Z$ acting on this lattice via $\langle \mu_n \rangle$, multiplication by the $n$th roots of unity. -->
+					<!-- 	</p> -->
+
+						<p class="fragment fade-in-then-semi-out">
+						Define the set $Y_d$ as
+						$$Y_d = \left\{ \left[ \begin{smallmatrix} a & b \\ c & d \end{smallmatrix}\right]  \mathcal{O}_K^2 \ | \ a,b,c,d \in  K_{\R} = K\otimes \R , ad-bc =1_{K_{\R}} \right\}.$$
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						In conventional notation, this is just
+						$$Y_d = \{ g (  \mathcal{O}_K^{\oplus 2} ) \ | \  g \in SL_2(K_{\R}) \} \simeq  SL_2(K_\mathbb{R} ) /SL_2(\mathcal{O}_K). $$
+						</p>
+
+					<!-- 	<p class="fragment fade-in-then-semi-out"> -->
+<!-- Again, with this bijection, we will make $Y_d$ a topological space. But does there exists a probability measure on $Y_d$? -->
+					<!-- 	</p> -->
+
+
+					<!-- </section> -->
+					<!-- <section> -->
+					<!-- 	<p class="fragment fade-in-then-semi-out"> -->
+					<!-- 	Fortunately, the following theorem exists. -->
+					<!-- 	</p> -->
+					<!-- 	<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   "> -->
+					<!-- 		<h4 style="display: inline-block;" > Theorem  </h4> <i> (Borel, Harish-Chandra, 1962)</i> --> 
+					<!-- 		<br> -->
+					<!-- 		Let $\mathcal{G}\subseteq SL_n(\C)$ be an algebraic group defined over $\mathbb{Q}$. Then $\mathcal{G}_{\mathbb{R}}/\mathcal{G}_{\mathbb{Z}}$ has a finite invariant measure if any only if $X_{\mathbb{Q}}(\mathcal{G}^{0}) = \{ e\}$, where $\mathcal{G}^{0} \subseteq \mathcal{G}$ is the connected component of identity in the Zariski topology. That is to say, there are no non-trivial $\mathbb{Q}$-characters of $\mathcal{G}^{0}$. -->
+
+					<!-- 	</div> -->
+					<!-- 	<div class="fragment fade-in" style="text-align: center"> -->
+					<!-- 		<img src="images/BHC.JPG" alt="Borel and Harish-Chandra" height= "250" > -->
+					<!-- 	</div> -->
+					<!-- </section> -->
+					<!-- <section> -->
+
+						<p class="fragment fade-in-then-semi-out">
+						$Y_d$ can be give probability measure.
+						But why make such a $Y_d$?
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						Note that whenever $a,b,c,d \in {K}_{\R}$, we have that 
+						$$ \left[ \begin{matrix} a & b \\ c & d \end{matrix}\right]\left[ \begin{matrix} \mu_n & 0 \\ 0 & \mu_n \end{matrix}\right]=\left[ \begin{matrix} \mu_n & 0 \\ 0 & \mu_n \end{matrix}\right]\left[ \begin{matrix} a & b \\ c & d \end{matrix}\right]$$
+						</p>
+					  </section>
+
+					  <section>
+
+						<p class="fragment fade-in-then-semi-out">
+						And if $x,y \in \mathcal{O}_K$ and if $r \notin n \Z$, we have that 
+						$$ \left[ \begin{matrix} \mu_n^r & 0 \\ 0 & \mu_n^r \end{matrix}\right]\left[ \begin{matrix} x  \\ y \end{matrix}\right]=\left[ \begin{matrix} x  \\ y \end{matrix}\right] \Rightarrow x=y=0.$$
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						Putting the two together implies that for each $g\in SL_2(K_{\mathbb{R}})$, $g(\mathcal{O}_K^{\oplus 2})$ is invariant under the cyclic group action of $\langle \mu_n \rangle$, and the action has full orbits on the non-zero points of the lattice.
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						So if $f$ is the indicator function of an origin-centered ball with respect to a quadratic form that is invariant under $\langle \mu_n \rangle$, we have that $\Phi_f(\Lambda) \in \{0,n,2n,3n,4n,\ldots\}$ for $\Lambda \in Y_d$. Such a quadratic form always exists by averaging!
+						</p>
+
+					</section>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						Venkatesh, then proves the following analogue of Siegel's theorem.
+
+						</p>
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Theorem  </h4> <i> (Venkatesh 2013)</i> 
+							<br>
+Let $d = 2\varphi(n)$
+							Suppose $f:K_{\mathbb{R}}^2 \rightarrow \mathbb{R}$ is a compactly supported bounded measurable function. Then, the following holds.
+							\begin{align}
+							\int_{Y_d} \Phi_f = \int_{SL_2(K_\mathbb{R})/SL_2(\mathcal{O}_K)}^{} \left( \sum_{v \in g \mathcal{O}_K^{\oplus 2} \setminus \{ 0\}}^{}f(v) \right) dg = \int_{\mathbb{R}^{d}}^{} f(x) dx,
+							\end{align}
+							where the $dx$ on the right-hand side is that lebesgue measure on $\mathbb{r}^{d}$ that makes $\mathcal{o}_k^{\oplus 2}$ of unit covolume and $dg$ is the unique $sl_2(k_\mathbb{r})$-invariant probability measure on $y_d$.
+						</div>
+
+						<p class="fragment fade-in-then-semi-out">
+						<b>Conclusion</b>: By setting $f$ as the indicator function of a ball in a suitable quadratic form, we conclude that  there exists some lattice $\Lambda \in Y_d$ such that $\Phi_f(\Lambda) = 0$. That is, there is some lattice of unit covolume that intersects trivially with an origin centered ball of volume $ n - \varepsilon$.
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						<b>Another conclusion</b>: $c_{2 \varphi(n)} \ge n$ for all $n$!
+						</p>
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<h2>
+					   	Towards division algebra
+					</h2>
+
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						The division algebra case is also very similar. 
+						Let $D$ be a finite-dimensional division algebra over $\mathbb{Q}$. Let $\mathcal{O} \subseteq D$ be an order in $D$. We work in $d = 2 \dim_{\mathbb{Q}} D$ dimensions. Define $D_{\R}= D \otimes_\mathbb{Q} \R$.
+						$$Y_d = \{ g (  \mathcal{O}^{\oplus 2} ) \ | \  g \in SL_2(D_{\R}) \} \simeq  SL_2(D_\mathbb{R} ) /SL_2(\mathcal{O}). $$
+						<br>
+						Here 
+						$$ SL_2(D_{\R})  = \left\{    \left[ \begin{matrix} a & b \\ c & d \end{matrix}\right] \ | \ \left[ \begin{matrix} x \\ y \end{matrix}\right]  \mapsto \left[ \begin{matrix} ax + by  \\ cx  + dy  \end{matrix}\right]  \text{ is a measure preserving map on } D_{\R}^{\oplus 2}    \right\}$$
+						</p>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						$Y_d$ consists of lattices that are invariant under diagonal right-multiplication by units in $\mathcal{O}$
+						$$  g (  \mathcal{O}^{\oplus 2} ) = g (  \mathcal{O}^{\oplus 2} ) \left[ \begin{matrix} \mu & 0 \\ 0 & \mu \end{matrix}\right] , \text{ for any } \mu \in \mathcal{O}^{*} $$
+
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						And if $x,y \in \mathcal{O}$ and if $ \mu \in \mathcal{O}^{*}  \setminus \{  1_{D}\}$, we have that 
+						$$\left[ \begin{matrix} x  \\ y \end{matrix}\right] \left[ \begin{matrix} \mu & 0 \\ 0 & \mu \end{matrix}\right]=\left[ \begin{matrix} x  \\ y \end{matrix}\right] \Rightarrow x=y=0.$$
+						</p>
+
+					</section>
+					<section>
+
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Theorem  </h4> <i> (G. 2021)</i> 
+							<br>
+							Let $d = 2 [D:\mathbb{Q}]$.
+							Suppose $f:D_{\mathbb{R}}^2 \rightarrow \mathbb{R}$ is a compactly supported bounded measurable function. Then, the following holds.
+							\begin{align}
+							\int_{Y_d} \Phi_f = \int_{SL_2(D_\mathbb{R})/SL_2(\mathcal{O})}^{} \left( \sum_{v \in g \mathcal{O}^{\oplus 2} \setminus \{ 0\}}^{}f(v) \right) dg = \int_{\mathbb{R}^{d}}^{} f(x) dx,
+							\end{align}
+							where the $dx$ on the right-hand side is that Lebesgue measure on $\mathbb{R}^{d}$ that makes $\mathcal{O}^{\oplus 2}$ of unit covolume and $dg$ is the unique $SL_2(D_\mathbb{R})$-invariant probability measure on $Y_d$.
+						</div>
+
+
+						<p class="fragment fade-in-then-semi-out">
+						To get packing bounds, fix a finite subgroup $G_0 \subseteq \mathcal{O}^*$ to act diagonally on the right of $\mathcal{O}^{\oplus 2}$. We get the bounds
+						$$c_{2 \dim_{\mathbb{Q}} D} \ge \# G_0.$$
+						</p>
+
+					</section>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						Let $(G_{0},\mathcal{O}, D ) $ be as finite subgroup inside an order inside a $\mathbb{Q}$-division algebra respectively. Then there exists a lattice packing in dimensions $d= 2\dim_{\mathbb{Q}} D$ whose packing efficiency is at least $\frac{1}{2^{d}} ( \#G_{0} )$.
+
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						
+						Note that the following <b>tightening</b> can be done once we have a tuple $(G_{0},\mathcal{O},D)$. 
+When $D$ is a $\mathbb{Q}$-division algebra, the $\mathbb{Q}$-span of $G_{0}$ in $D$ is also a division algebera. 
+Let $\mathbb{Z}\langle G_{0}\rangle  \subseteq \mathcal{O}$ be the $\mathbb{Z}$-span of $G_{0}$, then we get that $(G_{0},\mathbb{Z}\langle G_{0}\rangle ,\mathbb{Q}\langle G_{0}\rangle )$ is another tuple that gives us a lower bound.
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						So we only need to find finite subgroups that live in $\mathbb{Q}$-division algebras. Fortunately, there exists a complete classification of such finite subgroups due to Amitsur, 1955.
+						</p>
+					</section>
+					<section>
+
+						<div class="fragment fade-in" style="float: center;  text-align: center">
+							<img src="images/amitsur.png"  height= "280" >
+						</div>
+						<div class="fragment fade-in" style="float: center;  text-align: center">
+							<img src="images/terse1.png"  height= "220" >
+							<img src="images/terse2.png"  height= "220" >
+						</div>
+					</section>
+					<section > 
+						For brewity, we will not discuss classification of of finite subgroups ofdivision rings. Instead, let us talk about effectiveness of these results.
+					</section>
+				</section>
+				<section style="text-align: left;">
+					<h2>
+						Controlled randomness
+					</h2>
+
+					<section > 
+						<div style="float: left;  width:50%; ">
+
+							<p class="fragment fade-in-then-semi-out">
+							Choose a prime number $p$. Consider the map $\pi_p:\Z^d \to \F_p^d$.
+							</p>
+						<p class="fragment fade-in-then-semi-out">
+						$\F_p^d \setminus \{0\}$ is a disjoint union of lines.
+						$$\F_p^d \setminus \{0\}= \bigsqcup_{v \in (\F_p^d\setminus\{0\} )/\F_p^* }(\F_p v \setminus \{0\}) $$
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						This implies that
+						$$\Z^d \setminus p \Z^d = \bigsqcup_{v \in (\F_p^d\setminus\{0\} )/\F_p^* } \pi_p^{-1}(\F_p v \setminus \{0\}) $$
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						<!-- Empty transition -->
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						Let us put all these sub-lattices in one set
+						$$\mathcal{L}_p'= \{ \pi_p^{-1}(\F_p v) \ | \ v \in \F_p^d \setminus \{ 0 \} \}.$$
+						</p>
+						</div>
+						<div style="float: right;  width:50%; ">
+							<h4 style="text-align: center">
+								<br>
+								Visualizing in $\R^2$
+							</h4>
+							<div class="fig-container no-margin-top" data-preload data-file="LatticeAnimation/lattice_rogers.html"></div>
+						</div>
+					</section>
+					<section > 
+
+							<p class="fragment fade-in-then-semi-out">
+							However the lattices in $\mathcal{L}_p'$  are not unit covolume.
+
+But each one of them has a covolume of $p^{d-1}$.
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							So appropriately normalizing, elements of this set become unit covolume lattices.
+							$$\mathcal{L}_p= \{  C_p \pi_p^{-1}(\F_p v) \ | \ v \in \F_p^d \setminus \{ 0 \} \},$$ when $C_p = p^{-\left( 1- \frac{1}{d} \right)} $. <br>
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							So $\mathcal{L_p} \subseteq X_d$ is a set of unit covolume lattices, with $\#\mathcal{L}_p \to \infty$ as $p \to \infty$.
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							Now as before let $f:\R^d \to \R$ be a compactly supported Riemann integrable function. Let $\Phi_f:X_d \to \R$ again be the lattice-sums of $f$.
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							So let us try to find $\Phi_f$ on $\mathcal{L}_p$. We will assume that the prime $p$ is very large.
+							\begin{align}
+							\frac{1}{\#\mathcal{L}_p}\sum_{\Lambda \in \mathcal{L}_p} \Phi_f(\Lambda)
+							\end{align}
+							</p>
+					</section>
+					<section > 
+						<div style="float: left;  width:50%; ">
+
+							<p class="fragment fade-in-then-semi-out">
+							By construction, we have that 
+							$$ C_p\Z^d \setminus p C_p \Z^d = \bigsqcup_{ \Lambda \in \mathcal{L}_p } \Lambda \setminus(p C_p \Z^d) $$
+						</p>
+							<p class="fragment fade-in-then-semi-out">
+							Using this and some manipulation gives us
+							\begin{align}
+							 & \frac{1}{\#\mathcal{L}_p}\sum_{\Lambda \in \mathcal{L}_p} \Phi_f(\Lambda) \\ & = \sum_{v \in (pC_p\Z^d) \setminus \{0\} } f(v) 	 +    \frac{1}{\#\mathcal{L}_p}  \sum_{v \in C_p \Z^d \setminus ( pC_p \Z^d )} f(v) .
+							 \end{align}
+						</p>
+							<p class="fragment fade-in-then-semi-out">
+							Since $pC_p = p^{\frac{1}{d}} \to \infty$ as $p \to \infty$, the non-zero points of $pC_p \Z^d $ are pushed away from the support of $f$.
+						</p>
+						</div>
+						<div style="float: right;  width:50%; ">
+							<h4 style="text-align: center">
+								<br>
+								Visualizing in $\R^2$
+							</h4>
+							<div class="fig-container no-margin-top" data-file="LatticeAnimation/lattice_rogers2.html"></div>
+						</div>
+					</section>
+
+					<section > 
+
+							<p class="fragment fade-in-then-semi-out">
+							So for large $p$, we can ignore the first term. <b>Or</b>, we can assume that the coeffecient behind the first term was $ (\# \mathcal{L}_p)^{-1}$. So we get that 
+							\begin{align}
+							 \frac{1}{\#\mathcal{L}_p}\sum_{\Lambda \in \mathcal{L}_p} \Phi_f(\Lambda) & =     \frac{1}{\#\mathcal{L}_p}  \sum_{v \in C_p \Z^d \setminus ( pC_p \Z^d )} f(v) +\frac{1}{\#\mathcal{L}_p}  \sum_{v \in (pC_p\Z^d) \setminus \{0\} } f(v) \\
+							 & =     \frac{1}{\#\mathcal{L}_p}  \sum_{v \in C_p \Z^d \setminus \{0\} } f(v) .
+							 \end{align}
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							And now, <b>shocking fact!</b><br>
+							$ ( C_p^d \# \mathcal{L_p} )\to 1$ as $p \to \infty$ (Easy combinatorics exercise.)
+							</p>
+							<p class="fragment fade-in-then-semi-out">
+							So in fact, as $p \to \infty$, the sum on the right converges to the Riemann integral of $f$ on $\R^d$.
+							$$     \frac{1}{\#\mathcal{L}_p}  \left( \sum_{v \in (\# \mathcal{L}_p)^{\frac{1}{d}} \Z^d \setminus \{0\} } f(v) \right) \to \int_{\R^d} f(x) dx . $$
+							</p>
+					</section>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						What we have managed to show (with proof!) is
+						</p>
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Theorem  </h4> <i> (Rogers, 1947) </i> 
+							<br>
+
+							Let $p$ be an arbitrary prime, $\mathbb{F}_p$ be the field with $p$ elements and let $\pi_p:\mathbb{Z}^{d} \rightarrow \mathbb{F}_p^{d}$ be the natural coordinate-wise projection map. 
+
+							Let $\mathcal{L}_p$ be the set of sub-lattices of $\mathbb{Z}^{d}$ that are pre-images of one-dimensional subspaces in this projection map scaled to become unit covolume, i.e. $$\mathcal{L}_p = \{ C_p \pi_p^{-1}( \mathbb{F}_p v) \ | \ v \in \mathbb{F}_p^d \setminus \{ 0\} \}, C_p = p^{-\left(1-\frac{1}{d}\right)} .$$
+
+							Consider a compactly supported continuous function $f:\mathbb{R}^{d} \rightarrow \mathbb{R}$ and the lattice-sum function $\Phi_f:X_d \rightarrow \mathbb{R}$. Then the following holds.
+							\begin{align}
+							\lim_{ p \rightarrow \infty}\left[ \frac{1}{\# {\mathcal{L}}_p}\sum_{ \Lambda \in {\mathcal{L}}_p} \Phi_{f}\left( \Lambda\right) \right] = \int_{\mathbb{R}^{d}} f(x) dx.
+							\end{align}
+
+
+						</div>
+						<p class="fragment fade-in-then-semi-out">
+						After using the integrality gap lemma, this is a constructive proof of $c_d \ge 2$.
+						</p>
+					</section>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						Since we are working with finitely many lattices, we can use this procedure to obtain a probabilistic algorithm that randomly generates lattices with good packing efficiency
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						This idea can be generalized to number fields, as was shown by (Moustrou, 2016).
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						We can also generalize the proof for division rings. But what are analogue of prime ideals for division rings?
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						Suppose $D$ is a $\mathbb{Q}$-division ring, $K$ be the center of the ring and $\mathcal{O}$ be an $\mathcal{O}_K$-order in $D$. Let $[D:K]=n^2$.
+						<br>
+						<br>
+
+						A prime ideal of an $\mathcal{O}$ is a proper two-sided  ideal $\mathfrak{p}$ in $\mathcal{O}$ such that $K\cdot \mathfrak{p} =D$ and such that for every pair of two sided ideals $S,T$ in $\mathcal{O}$, we have that $S\cdot T\subset \mathfrak{p}$ implies $S\subset \mathfrak{p}$ or $T\subset \mathfrak{p}$. 
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						<b> Important property: </b>
+						For all but finitely many primes $\mathfrak{p}$ of $\mathcal{O}$, the quotient $\mathcal{O}/\mathfrak{p}\mathcal{O}$ is isomorphic to $M_n(\mathbb{F}_q)$, where $\mathcal{O}_K/\mathcal{O}_K \cap \mathfrak{p} \cong \mathbb{F}_q$.
+						</p>
+
+						<p class="fragment fade-in-then-semi-out">
+						Hence we get countably many projection maps $\pi_\mathfrak{p}: \mathcal{O} \rightarrow M_n(\mathbb{F}_q)$.
+						</p>
+					</section>
+
+					<section>
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Theorem  </h4> <i> (G., Serban, 2021) </i> 
+							<br>
+
+							Let $d = 2 [D:\mathbb{Q}]$.
+							Let $\mathfrak{p} \subseteq \mathcal{O}$ be a prime as above and let $\pi_\mathfrak{p}:\mathcal{O}^{t} \rightarrow M_n(\mathbb{F}_q)^{2}$ be the projection map as above (on two copies of $\mathcal{O}$).
+
+							Consider the set of sub-lattices of $\mathcal{O}^{2}$ that are pre-images of $M_n(\mathbb{F}_q)$-submodules of $\mathbb{F}_q$-dimension $n(2n-1)$,
+							i.e. 
+\begin{align*}
+\mathcal{C}_{\mathfrak{p}} & = \{ C \subseteq M_n(\mathbb{F}_q)^{ 2 } \ | \ C \text{ is a $M_n(\mathbb{F}_q)$-submodule }\simeq (\mathbb{F}_q^{n})^{\oplus (2n-1)}\} , \\
+\mathcal{L}_{\mathfrak{p} } & = \{ \beta_{\mathfrak{p}} \pi_{\mathfrak{p}}^{-1}(C) \ | \ C \in \mathcal{C}_{\mathfrak{p}}\} , \ \  \beta_{\mathfrak{p}} = q^{-1/nmt}
+  \end{align*}
+
+							Consider a compactly supported continuous function $f:\mathbb{R}^{d} \rightarrow \mathbb{R}$ and the lattice-sum function $\Phi_f:X_d \rightarrow \mathbb{R}$. Then the following holds.
+							\begin{align}
+							\lim_{ \#\mathbb{F}_q  \rightarrow \infty}
+							 \left[ \frac{1}{\#{\mathcal{L}}_{\mathfrak{p}}}
+							\sum_{ \Lambda \in {\mathcal{L}}_{\mathfrak{p}} }
+							\Phi_{f}\left( \Lambda\right) \right] 
+							= \int_{\mathbb{R}^{d}} f(x) dx.
+							\end{align}
+							where the $dx$ on the right-hand side is that Lebesgue measure on $\mathbb{R}^{d}$ that makes $\mathcal{O}^{2} \subseteq (D \otimes \mathbb{R})^2 \simeq \mathbb{R}^d$ of unit covolume.
+
+						</div>
+					</section>
+					<section>
+						<p class="fragment fade-in-then-semi-out">
+						We can therefore prove the following from above.
+						</p>
+						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
+							<h4 style="display: inline-block;" > Theorem  </h4> <i> (G., Serban, 2021) </i> 
+							<br>
+							Let $m_k=\prod_{\substack{p\leq k \text{ prime}\\2\nmid\mathrm{ord}_2p}}p$ and set $n_k:=8\varphi(m_k)$. Then for any $\varepsilon>0$ there is an effective constant $c_\varepsilon$ such that for $k>c_\varepsilon$ a lattice $\Lambda$ in dimension $n_k$ with density 
+  $$\Delta(\Lambda)\geq (1-\varepsilon)\frac{24\cdot m_k}{2^{n_k}}$$
+  can be constructed in $e^{4.5\cdot n_k\log(n_k)(1+o(1))}$ binary operations. 
+  This construction leads to the asymptotic density of 
+  $\Delta(\Lambda)\geq (1-e^{-n_k})\frac{3\cdot n_k(\log\log n_k)^{7/24}}{2^{n_k}}$. 
+
+						</div>
+						<p class="fragment fade-in-then-semi-out">
+						The sequence above is actually the sequence of green points mentioned before. This theorem shows that the construction is also effective. 
+						</p>
+						<p class="fragment fade-in-then-semi-out">
+						The condition of $ 2 \nmid \mathrm{ord}_p 2 $ has to do with division ring contructions. Details can be given on request!
+						</p>
+					</section>
+				<section style="text-align: left;">
+					<h2>
+						Thank you for your attention!
+					</h2>
+					<section>
+						<div style="float: left;  width:50%; ">
+
+							<br>
+							<b>Email:</b> 
+							<br>
+							<span style="font-family: 'Courier New';"> nihar.gargava@epfl.ch </span>
+							<br>
+							<br>
+							<b>Based on arXiv preprints: </b>
+							<br>
+							<span style="font-family: 'Courier New';"> 
+							2107.04844, 2111.03684
+							</span>
+							<br>
+							<br>
+							<b>Slides: </b>
+							<br>
+							<span style="font-family: 'Courier New';"> 
+							nihargargava.com/divalg_seminar
+							</span>
+							<br>
+							<br>
+							<b>How does it work?: </b>
+							<br>
+							This presentation and all the animations are written in 
+							<span style="font-family: 'Courier New';"> 
+							html</span> and
+							<span style="font-family: 'Courier New';"> 
+							javascript</span>
+							using <a href="https://revealjs.com">reveal.js</a> and
+							<a href="https://d3js.org">d3.js</a>.
+							<br>
+							<br>
+							Feel free to contact for questions/comments.
+
+						</div>
+						<div style="float: right;  width:40%; ">
+							<h4 style="text-align: center">
+								<br>
+
+							</h4>
+							<div class="fig-container no-margin-top"  data-file="LatticeAnimation/lattice_fun.html"></div>
+						</div>
+					</section>
+
+				</section>
+
+				<section style="text-align: left;">
+					<h2>Appendix: How to generate random 2-dimensional lattices </h2>
+					<br>
+					<p >
+
+					To the map $\psi:[\pi/3,2\pi/3]\times ]0,1] \rightarrow \mathbb{H}$
+					given by $\psi(a,b) = \cos(a) + i \sin(a)/b$ is a measure preserving map!
+					<br>
+					<br>
+					It maps the rectangle bijectively to a fundamental domain of $\mathbb{H}/SL_2(\mathbb{Z})$.
+					<br>
+					<br>
+					Using this, the following map randomly generates a lattice.
+					\[ \psi_1: [0,2\pi]\times [\pi/3,2\pi/3] \times ] 0,1] \to SL_2(\mathbb{R})\\
+					\psi_1(x,y,z) =  \left[  \begin{smallmatrix} 1 & \cos(y) \\ 0 & 1 \end{smallmatrix}  \right] \left[  \begin{smallmatrix} \left(\frac{\sin(y)}{z}\right)^{\frac{1}{2}} & 0 \\ 0 & \left({\frac{\sin(y)}{z}}\right)^{-\frac{1}{2}} \end{smallmatrix}  \right] \left[  \begin{smallmatrix} \cos(x) & \sin(x) \\ -\sin(x) & \cos(x) \end{smallmatrix}  \right]
+					\]
+					<br>
+					<br>
+
+					This only works for $d=2$. It is not known how to generalize this to higher dimensions!
+					</p>
+
+
+
+
+				</section>
+
+			</div>
+
+			<script src="dist/reveal.js"></script>
+			<script src="plugin/notes/notes.js"></script>
+			<script src="plugin/markdown/markdown.js"></script>
+			<script src="plugin/highlight/highlight.js"></script>
+			<script src="plugin/math/math.js"></script>
+			<script src="plugin/reveald3/reveald3.js"></script>
+
+			<script >
+				// More info about initialization & config:
+				// - https://revealjs.com/initialization/
+				// - https://revealjs.com/config/
+				<!-- import Reveald3 from 'plugin/reveald3/reveald3.js'; -->
+			Reveal.initialize({
+				hash: true,
+				history: true,
+				transition: 'linear',
+				center: false,
+				slideNumber: true,
+				math: {
+					// mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+					config: 'TeX-AMS_HTML-full'
+				},
+				    // // optional configurations for reveald3
+				    reveald3: {
+
+					 // If the previous slide is a slide further in the deck (i.e. we come back to
+					 // slide from the next slide), by default the last fragment transition will be
+					 // triggered to to get the last state of the visualization and simulate the
+					 // the state the simulation was in when we left the slide. This can be
+					 // discarded.
+					 runLastState: false, //default true
+
+					 // If a special onSlideChanged transition has been set (if for example the visualization
+					 // has been preloaded using the data-preload attribute, and you want a specific transition
+					 // to happen only when you arrive on the slide), you can choose the delay with which such 
+					 // a transition will occur (note that in the case of no data-preload, if no delay is set then
+					 // the transition might not occur since the iframe might not be fully loaded yet when the 
+					 // function is triggered). // default 0. 
+					 onSlideChangedDelay: 500,
+
+					 // This will prefix the path attributes of the source html paths with the given path.
+					 // (by default "src" if set to true or with the specified path if string)
+					 mapPath: false, // default: false
+
+					 // If true, will try to locate the file at a fallback url without the mapPath prefix in case no file is found
+					 // at the stipulated url with mapPath
+					 tryFallbackURL: false, //default false
+
+					 // Checking for file existance has been reported to fail in rare 
+					 // cases though files did exist. This option is to disable the file checking.
+					 //see: https://github.com/gcalmettes/reveal.js-d3/issues/10
+					 disableCheckFile: false, //default false,
+				    },
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath ],
+
+				//copied from https://github.com/rogeralmeida/revealjs-animated
+				dependencies: [
+						{ src: 'plugin/reveald3/reveald3.js' },
+						{ src: 'https://d3js.org/d3.v4.min.js' },
+					]
+			});
+			</script>
+	</body>
+</html>

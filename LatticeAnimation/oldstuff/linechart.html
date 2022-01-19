@@ -1,0 +1,363 @@
+
+<head>
+  <script src="https://unpkg.com/d3@5.6.0/dist/d3.min.js"></script>
+  <script src="https://rawgit.com/pratyushcrd/d3-path-morphing/master/build/d3-path-morphing.js"></script>
+</head>
+
+<body>
+  <svg >
+  </svg> 
+
+    <script>
+
+
+      //Setting up the transitions
+      var _transitions = [],
+  _inverse_transitions = [];
+
+
+//value of q0
+var q0=2;
+
+//Functions to plot
+const funk  = (x,q0) =>
+  x<0.5 ? 2*x : 0 ;
+
+const H  = (q,x) =>
+{ return x*(Math.log(q-1)/Math.log(q))-x*(Math.log(x)/Math.log(q))-(1-x)*(Math.log(1-x)/Math.log(q)) ;} ;
+
+const GV = (q,x) => (1 - H(q,x) ) ;
+
+const interme = (q,x) =>  ( (1-(1/q)) - x*(q-2)/q - (2/q)*(Math.sqrt((x-x*x)*(q-1))) ) ;
+
+const LP = (q,x) => H(q,interme(q,x)) ;
+
+
+// Just setting up width and height
+//These are global wid, hei
+var h = +Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+var w = +Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+//These are wid, hei of the graph (without the margin)
+var width = 600;
+var height = 600;
+const color1 = "magenta"
+const LPcolor = "Brown"
+const GVcolor = "DarkTurquoise"
+const color2 = "green"
+
+//These are the attributes for the margin
+var margin = {top: 0, right: 0, bottom: 0, left: 0};
+
+// Just something to highlight what's going on
+const svg = d3.select('svg');
+svg.style('background-color','white');
+svg.style('width',w);
+svg.style('height',h);
+
+
+//Will create a smaller area for the actual chart to be in 
+const insvg = svg.append('g')
+  .attr("transform", "translate(" + ( w/2 + margin.left - width/2) + "," + (h/2 +  margin.top - height/2) +  ")");
+
+
+//Let's make some axes
+
+//x-y axes
+var x = d3.scaleLinear()
+  .domain([0,1])
+  .range([0, width]);
+
+var y = d3.scaleLinear()
+  .domain([0,1])
+  .range([height, 0]);
+
+
+//I don't know what this does, 				
+//var z = d3.scale.category10();
+
+
+const plotour =  darray => {
+
+
+
+  insvg.append('text')
+    .text("Rate of the code")
+    .attr('text-anchor', 'middle')
+    .attr("font-size","2.3em")
+    .attr("letter-spacing","normal")
+    .attr('transform', " translate("+ -1* width/10 + " ,"+height/2+")  rotate(-90)") 
+    .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+    .attr('class','ytext');
+
+  insvg.append('text')
+    .text("Relative minimum distance")
+    .attr('text-anchor', 'middle')
+    .attr("font-size","2.3em")
+    .attr("letter-spacing","normal")
+    .attr('transform', " translate("+  width/2 + " ,"+(height + height/10)+")") 
+    .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+    .attr('class','xtext');
+
+  insvg.append('text')
+    .text("Comparing asymptotic bounds when")
+    .attr('text-anchor', 'middle')
+    .attr("font-size","2.3em")
+    .attr("font-weight","bold")
+    .attr("letter-spacing","normal")
+    .attr('transform', " translate("+ ( width/2 - width/16) + " ,"+(height + 2.5*height/10)+")") 
+    .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+    .attr('class','maintext');
+  insvg.append('g').call(d3.axisLeft(y));
+
+  insvg.append('text')
+    .text("q = 2")
+    .attr("font-size","3.0em")
+    .attr("font-weight","bold")
+    .attr("letter-spacing","normal")
+    .attr('transform', " translate("+  width*1.01  + " ,"+(height + 2.5*height/10)+")") 
+    .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+    .attr('class','changingtext');
+
+  insvg.append('rect')
+    .attr('x', width*0.5 ) 
+    .attr('class','legbox')
+    .attr('width', width/2)
+    .attr('height', 0)
+    .attr('fill',"white")
+    .attr('opacity',0)
+    .attr('stroke',"AliceBlue")
+    .attr('stroke-width',"3px")
+    .attr('rx',"3px")
+    .attr('ry',"3px");
+
+  insvg.append('text')
+    .text("GV Lower Bound")
+    .attr("font-size","1.2em")
+    .attr("text-anchor","middle")
+    .attr("letter-spacing","normal")
+    .attr('transform', " translate("+  width*0.6666  + " ," + (height/16)+")") 
+    .attr("fill",GVcolor)
+    .attr("opacity",0)
+    .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+    .attr('class','GVtext');
+
+
+  insvg.append('text')
+    .text("LP Upper Bound")
+    .attr("font-size","1.2em")
+    .attr("text-anchor","middle")
+    .attr("letter-spacing","normal")
+    .attr('transform', " translate("+  width*0.6666  + " ," + (2*height/16)+")") 
+    .attr("fill",LPcolor)
+    .attr("opacity",0)
+    .attr("font-family", ' "Source Sans Pro", Helvetica, sans-serif' )
+    .attr('class','LPtext');
+
+  insvg.append('g').call(d3.axisLeft(y));
+  insvg.append('g').call(d3.axisBottom(x))
+    .attr('transform', "translate(0,"+height+")"); 
+
+
+
+  insvg.selectAll('rect')
+    .data(darray)
+    .enter().append('circle')
+    .attr('class',d => 'type'+d.n)
+    .attr('cx',d=>x(d.d/d.n))
+    .attr('cy',d=>y(d.k/d.n))
+    .attr('r',d => 6.0/Math.sqrt(d.n))
+    .attr('fill',d => d3.interpolateLab(color1, color2)( d.n/31))
+    .attr('opacity',1);
+
+
+
+};
+
+
+
+// Draw data from file, perform our operation
+d3.csv('linear2.csv').then(darray => {
+  console.log(darray);
+  plotour(darray);
+}
+);
+
+
+
+
+
+//Just an array of numbers between 0 and 1 ( for our line!)
+var xvalues = [];
+for (var i = 1; i <= 299; i++) {
+	  xvalues.push(i/300);
+	  }
+
+
+
+
+	  //A line function to give us the points
+
+
+	  var lineGenerator = d3.line()
+	  .x(xv => 0 )
+  .y(xv => 0);
+
+
+var lineGenerator2 = d3.line()
+  .x(xv => 0)
+  .y(xv => 0);
+
+//Line genrator for our functions
+//Be careful with the limits of x variable
+
+var GVgen =  q => { 
+  var most = 1-(1/q);
+  return d3.line()
+    .x(xv => x(xv*most))
+    .y(xv => y(GV(q,xv*most)));
+} ;
+
+var LPgen =  q => { 
+  var most = 1-(1/q);
+  return d3.line()
+    .x(xv => x(xv*most))
+    .y(xv => y(LP(q,xv*most)));
+} ;
+
+
+//Let's make a path
+insvg.append('path')
+  .attr('class','GVpath')
+  .attr('d',GVgen(2)(xvalues))
+  .attr('stroke',GVcolor)
+  .attr('stroke-width', 2)
+  .attr('stroke-linejoin','round')
+  .attr('fill','none')
+  .attr('opacity',0);
+
+insvg.append('path')
+  .attr('class','LPpath')
+  .attr('d',LPgen(2)(xvalues))
+  .attr('stroke',LPcolor)
+  .attr('stroke-width', 2)
+  .attr('stroke-linejoin','round')
+  .attr('fill','none')
+  .attr('opacity',0);
+
+_transitions.push(
+  ( ) => {d3.selectAll('path.GVpath')
+      .transition().duration(600)
+      .attr('opacity',1);
+
+    d3.selectAll('rect.legbox')
+      .transition().duration(600)
+      .attr('opacity',1) 
+      .attr('height',height/10);
+
+
+    d3.selectAll('text.GVtext')
+      .transition().duration(600)
+      .attr('opacity',1) ;
+
+  });
+
+_transitions.push(
+  ( ) => {d3.selectAll('path.LPpath')
+      .transition().duration(600)
+      .attr('opacity',1);
+
+    d3.selectAll('rect.legbox')
+      .transition().duration(600)
+      .attr('opacity',1) 
+      .attr('height',height/10 + height/16);
+
+    d3.selectAll('text.LPtext')
+      .transition().duration(600)
+      .attr('opacity',1) ;
+
+  });
+
+_transitions.push(
+  () => {
+
+    var thisnum = 9
+    d3.selectAll('text.changingtext')
+      .text("q = "+thisnum) ;
+
+    d3.selectAll('circle')
+      .transition()
+      .duration(600)
+      .attr("opacity",0) ;
+
+    d3.selectAll('path.GVpath')
+      .transition()
+      .duration(600)
+      .attrTween('d', function () {
+	return d3.morphPath(GVgen(2)(xvalues), GVgen(thisnum)(xvalues) );
+      });
+
+    d3.selectAll('path.LPpath')
+      .transition()
+      .duration(600)
+      .attrTween('d', function () {
+	return d3.morphPath(LPgen(2)(xvalues), LPgen(thisnum)(xvalues) );
+      });
+  } );
+
+_transitions.push(
+  () => {
+
+    var thisnum = 25
+    var oldnum = 9
+    d3.selectAll('text.changingtext')
+      .text("q = "+thisnum) ;
+
+    d3.selectAll('circle')
+      .transition()
+      .duration(600)
+      .attr("opacity",0) ;
+
+    d3.selectAll('path.GVpath')
+      .transition()
+      .duration(600)
+      .attrTween('d', function () {
+	return d3.morphPath(GVgen(oldnum)(xvalues), GVgen(thisnum)(xvalues) );
+      });
+
+    d3.selectAll('path.LPpath')
+      .transition()
+      .duration(600)
+      .attrTween('d', function () {
+	return d3.morphPath(LPgen(oldnum)(xvalues), LPgen(thisnum)(xvalues) );
+      });
+  } );
+
+_transitions.push(
+  () => {
+
+    var thisnum = 49
+    var oldnum = 25
+    d3.selectAll('text.changingtext')
+      .text("q = "+thisnum) ;
+
+    d3.selectAll('circle')
+      .transition()
+      .duration(600)
+      .attr("opacity",0) ;
+
+    d3.selectAll('path.GVpath')
+      .transition()
+      .duration(600)
+      .attrTween('d', function () {
+	return d3.morphPath(GVgen(oldnum)(xvalues), GVgen(thisnum)(xvalues) );
+      });
+
+    d3.selectAll('path.LPpath')
+      .transition()
+      .duration(600)
+      .attrTween('d', function () {
+	return d3.morphPath(LPgen(oldnum)(xvalues), LPgen(thisnum)(xvalues) );
+      });
+  } );
+    </script>
+</body>
