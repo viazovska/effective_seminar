@@ -28,8 +28,7 @@
 					<br>
 					
 					<br>
-						Chair of Number Theory,<br>
-						Section of Mathematics,
+						
 					<br>
 						École Polytechnique Fédérale de Lausanne, 
 					</p>
@@ -773,89 +772,7 @@ Let $d = 2\varphi(n)$
 						</p>
 					</section>
 				</section>
-				<section style="text-align: left;">
-					<h2>
-					   	Towards division algebra
-					</h2>
-
-					<section>
-						<p class="fragment fade-in-then-semi-out">
-						The division algebra case is also very similar. 
-						Let $D$ be a finite-dimensional division algebra over $\mathbb{Q}$. Let $\mathcal{O} \subseteq D$ be an order in $D$. We work in $d = 2 \dim_{\mathbb{Q}} D$ dimensions. Define $D_{\R}= D \otimes_\mathbb{Q} \R$.
-						$$Y_d = \{ g (  \mathcal{O}^{\oplus 2} ) \ | \  g \in SL_2(D_{\R}) \} \simeq  SL_2(D_\mathbb{R} ) /SL_2(\mathcal{O}). $$
-						<br>
-						Here 
-						$$ SL_2(D_{\R})  = \left\{    \left[ \begin{matrix} a & b \\ c & d \end{matrix}\right] \ | \ \left[ \begin{matrix} x \\ y \end{matrix}\right]  \mapsto \left[ \begin{matrix} ax + by  \\ cx  + dy  \end{matrix}\right]  \text{ is a measure preserving map on } D_{\R}^{\oplus 2}    \right\}$$
-						</p>
-
-
-						<p class="fragment fade-in-then-semi-out">
-						$Y_d$ consists of lattices that are invariant under diagonal right-multiplication by units in $\mathcal{O}$
-						$$  g (  \mathcal{O}^{\oplus 2} ) = g (  \mathcal{O}^{\oplus 2} ) \left[ \begin{matrix} \mu & 0 \\ 0 & \mu \end{matrix}\right] , \text{ for any } \mu \in \mathcal{O}^{*} $$
-
-						</p>
-
-						<p class="fragment fade-in-then-semi-out">
-						And if $x,y \in \mathcal{O}$ and if $ \mu \in \mathcal{O}^{*}  \setminus \{  1_{D}\}$, we have that 
-						$$\left[ \begin{matrix} x  \\ y \end{matrix}\right] \left[ \begin{matrix} \mu & 0 \\ 0 & \mu \end{matrix}\right]=\left[ \begin{matrix} x  \\ y \end{matrix}\right] \Rightarrow x=y=0.$$
-						</p>
-
-					</section>
-					<section>
-
-						<div class="fragment fade-in-then-semi-out" style="border:3px solid darkgrey;border-radius: 5px;padding: 25px 25px 25px 20px;border-style: outset;   ">
-							<h4 style="display: inline-block;" > Theorem  </h4> <i> (G. 2021)</i> 
-							<br>
-							Let $d = 2 [D:\mathbb{Q}]$.
-							Suppose $f:D_{\mathbb{R}}^2 \rightarrow \mathbb{R}$ is a compactly supported bounded measurable function. Then, the following holds.
-							\begin{align}
-							\int_{Y_d} \Phi_f = \int_{SL_2(D_\mathbb{R})/SL_2(\mathcal{O})}^{} \left( \sum_{v \in g \mathcal{O}^{\oplus 2} \setminus \{ 0\}}^{}f(v) \right) dg = \int_{\mathbb{R}^{d}}^{} f(x) dx,
-							\end{align}
-							where the $dx$ on the right-hand side is that Lebesgue measure on $\mathbb{R}^{d}$ that makes $\mathcal{O}^{\oplus 2}$ of unit covolume and $dg$ is the unique $SL_2(D_\mathbb{R})$-invariant probability measure on $Y_d$.
-						</div>
-
-
-						<p class="fragment fade-in-then-semi-out">
-						To get packing bounds, fix a finite subgroup $G_0 \subseteq \mathcal{O}^*$ to act diagonally on the right of $\mathcal{O}^{\oplus 2}$. We get the bounds
-						$$c_{2 \dim_{\mathbb{Q}} D} \ge \# G_0.$$
-						</p>
-
-					</section>
-					<section>
-						<p class="fragment fade-in-then-semi-out">
-						In fact we only need to find finite subgroups that live in $\mathbb{Q}$-division algebras. The order $\mathcal{O}$ can be aligned according to the finite group.
-						
-						Fortunately, there exists a complete classification of such finite subgroups due to Amitsur, 1955.
-						</p>
-					</section>
-					<section>
-
-						<div class="fragment fade-in" style="float: center;  text-align: center">
-							<img src="images/amitsur.png"  height= "280" >
-						</div>
-						<div class="fragment fade-in" style="float: center;  text-align: center">
-							<img src="images/terse1.png"  height= "220" >
-							<img src="images/terse2.png"  height= "220" >
-						</div>
-					</section>
-					<section>
-						<p class="fragment fade-in-then-semi-out">
-						The following sequence of lower bounds can be constructed purely from the new points. The merit is that these sequences produce lattices with non-commutative symmetries.
-						</p>
-						<p class="fragment fade-in-then-semi-out">
-						$\DeclareMathOperator{\ord}{ord}$
-						We pick $$m = \prod_{ \substack{ p \text{ is prime} \\ p \le x \\ 2 \nmid \ord_{p} 2} }^{} p$$ and $r=1$. Then observe that with this, we get that $m$ is odd and $\ord_{m}2$ is also odd. Using the classification just given before, we get that $c_{8\varphi(m)} \ge 24m$. This sequence was the one shown previously. It shows that $c_d \ge O(d (\log \log d)^{7/24})$
-						</p>
-						<p class="fragment fade-in-then-semi-out">
-						Suppose $q= 1+\prod_{i=1}^{N}p_{i} $ is a prime for some $N$. These number can be used to show
-						$$  c_{2 (q-1)^{2}\varphi(q-1) } \ge q(q-1)^{2}.$$
-						If there are infinitely many such primes, then this sequence asymptotically approaches $O(d\log \log d)$.
-						</p>
-						<p class="fragment fade-in-then-semi-out">
-						For brewity, we will not discuss classification of of finite subgroups ofdivision rings. Instead, let us talk about effectiveness of these results.
-						</p>
-					</section>
-				</section>
+				
 				<section style="text-align: left;">
 					<h2>
 						Controlled randomness
